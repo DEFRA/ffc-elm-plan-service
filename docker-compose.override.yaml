@@ -1,0 +1,20 @@
+version: '3.7'
+
+# This override file should be used when running this service in isolation
+# to provide required sibling services for local testing
+
+services:
+  ffc-demo-claim-service:
+    build:
+      context: .
+      target: development
+    command: >
+      sh -c "
+        scripts/wait-for/wait-for ffc-demo-claim-postgres:5432 --
+        scripts/wait-for/wait-for ffc-demo-claim-message-queue:9324 --
+        npm run migrate &&
+        npm run start:watch"
+    depends_on:
+      - ffc-demo-claim-message-queue
+    ports:
+      - "3003:3003"

@@ -1,0 +1,25 @@
+version: '3.7'
+
+# This override file should be used in development environments to
+# connect this service to sibling services from other repositories
+
+services:
+  ffc-demo-claim-service:
+    build:
+      context: .
+      target: development
+    command: >
+      sh -c "
+        scripts/wait-for/wait-for ffc-demo-claim-postgres:5432 --
+        scripts/wait-for/wait-for ffc-demo-message-queue:9324 --
+        npm run migrate &&
+        npm run start:watch"
+    networks:
+      - ffc-demo
+      - default
+    ports:
+      - "3003:3003"
+
+networks:
+  ffc-demo:
+    external: true
