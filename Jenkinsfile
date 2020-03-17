@@ -8,7 +8,7 @@ def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
 def pr = ''
-def serviceName = 'ffc-demo-claim-service'
+def serviceName = 'ffc-elm-plan-service'
 def sonarQubeEnv = 'SonarQube'
 def sonarScanner = 'SonarScanner'
 def timeoutInMinutes = 5
@@ -52,23 +52,17 @@ node {
       }
       stage('Helm install') {
         withCredentials([
-          string(credentialsId: 'sqs-queue-endpoint', variable: 'sqsQueueEndpoint'),
-          string(credentialsId: 'calculation-queue-url-pr', variable: 'calculationQueueUrl'),
-          string(credentialsId: 'calculation-queue-access-key-id-send', variable: 'calculationQueueAccessKeyId'),
-          string(credentialsId: 'calculation-queue-secret-access-key-send', variable: 'calculationQueueSecretAccessKey'),
-          string(credentialsId: 'schedule-queue-url-pr', variable: 'scheduleQueueUrl'),
-          string(credentialsId: 'schedule-queue-access-key-id-send', variable: 'scheduleQueueAccessKeyId'),
-          string(credentialsId: 'schedule-queue-secret-access-key-send', variable: 'scheduleQueueSecretAccessKey'),
+          string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
+          string(credentialsId: 'plan-queue-url-pr', variable: 'planQueueUrl'),
+          string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
+          string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
           string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
-          usernamePassword(credentialsId: 'claims-service-postgres-user-pr', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
+          usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-pr', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
-            /container.calculationQueueEndpoint="$sqsQueueEndpoint"/,
-            /container.calculationQueueUrl="$calculationQueueUrl"/,
-            /container.calculationCreateQueue="false"/,
-            /container.scheduleQueueEndpoint="$sqsQueueEndPoint"/,
-            /container.scheduleQueueUrl="$scheduleQueueUrl"/,
-            /container.scheduleCreateQueue="false"/,
+            /container.planQueueEndpoint="$planQueueEndpoint"/,
+            /container.planQueueUrl="$planQueueUrl"/,
+            /container.planCreateQueue="false"/,
             /container.redeployOnChange="$pr-$BUILD_NUMBER"/,
             /postgresExternalName="$postgresExternalName"/,
             /postgresPassword="$postgresPassword"/,
@@ -77,7 +71,7 @@ node {
           ].join(',')
 
           def extraCommands = [
-            "--values ./helm/ffc-demo-claim-service/jenkins-aws.yaml",
+            "--values ./helm/ffc-elm-plan-service/jenkins-aws.yaml",
             "--set $helmValues"
           ].join(' ')
 

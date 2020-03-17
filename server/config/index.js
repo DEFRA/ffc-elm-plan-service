@@ -3,7 +3,7 @@ const mqConfig = require('./mq-config')
 const databaseConfig = require('./database-config')
 
 const schema = joi.object({
-  env: joi.string().valid('development', 'test', 'production').default('development'),
+  env: joi.string().valid('development', 'production').default('development'),
   port: joi.number().default(3003)
 })
 
@@ -23,8 +23,7 @@ if (result.error) {
 const value = {
   ...result.value,
   database: databaseConfig,
-  scheduleQueueConfig: mqConfig.scheduleQueueConfig,
-  calculationQueueConfig: mqConfig.calculationQueueConfig,
+  planQueueConfig: mqConfig.planQueueConfig,
   isDev: result.value.env === 'development',
   isProd: result.value.env === 'production'
 }

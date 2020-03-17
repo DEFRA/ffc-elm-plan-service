@@ -1,18 +1,18 @@
 environment: production
-postgresUsername: postgres@mine-support2
+postgresUsername: postgres@elm_plans
 postgresPassword: changeme
-postgresDatabase: mine_claims
+postgresDatabase: elm_plans
 # postgresHost is the host name of the PostgreSQL service
-postgresHost: ffc-demo-claims-postgres
+postgresHost: ffc-elm-plans-postgres
 # postgresExternalName is the external host name to which PostgreSQL
 # requests should be forwarded. If empty, PostgreSQL is assumed to be
 # within the cluster and accessible via postgresHost
 postgresExternalName:
 postgresPort: 5432
-name: ffc-demo-claim-service
-namespace: ffc-demo
-workstream: ffc-demo
-image: ffc-demo-claim-service
+name: ffc-elm-plan-service
+namespace: ffc-elm
+workstream: ffc-elm
+image: ffc-elm-plan-service
 imagePullSecret:
 labels:
   instance:
@@ -36,20 +36,13 @@ container:
   restartPolicy: Always
   command: ["/bin/sh","-c"]
   args: ["npm --no-update-notifier run migrate && node index"]
-  calculationQueueName: calculation
-  calculationQueueEndpoint: http://ffc-demo-claim-message-queue:9324
-  calculationQueueUrl: http://ffc-demo-claim-message-queue:9324/queue/calculation
-  calculationQueueRegion: eu-west-2
-  calculationQueueAccessKeyId: elasticmq
-  calculationQueueSecretAccessKey: elasticmq
-  calculationCreateQueue: true
-  scheduleQueueName: schedule
-  scheduleQueueEndpoint: http://ffc-demo-claim-message-queue:9324
-  scheduleQueueUrl: http://ffc-demo-claim-message-queue:9324/queue/schedule
-  scheduleQueueRegion: eu-west-2
-  scheduleQueueAccessKeyId: elasticmq
-  scheduleQueueSecretAccessKey: elasticmq
-  scheduleCreateQueue: true
+  planQueueName: plan
+  planQueueEndpoint: http://ffc-elm-plan-message-queue:9324
+  planQueueUrl: http://ffc-elm-plan-message-queue:9324/queue/plan
+  planQueueRegion: eu-west-2
+  planQueueAccessKeyId: elasticmq
+  planQueueSecretAccessKey: elasticmq
+  planCreateQueue: true
 replicaCount: 1
 minReadySeconds: 10
 maxSurge: 1

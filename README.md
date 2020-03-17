@@ -1,4 +1,4 @@
-[![Known Vulnerabilities](https://snyk.io//test/github/DEFRA/ffc-demo-claim-service/badge.svg?targetFile=package.json)](https://snyk.io//test/github/DEFRA/ffc-demo-claim-service?targetFile=package.json)
+[![Known Vulnerabilities](https://snyk.io//test/github/DEFRA/ffc-elm-plan-service/badge.svg?targetFile=package.json)](https://snyk.io//test/github/DEFRA/ffc-elm-plan-service?targetFile=package.json)
 
 # FFC ELM plan service
 
@@ -23,27 +23,20 @@ Or:
 
 The following environment variables are required by the application container. Values for development are set in the Docker Compose configuration. Default values for production-like deployments are set in the Helm chart and may be overridden by build and release pipelines.
 
-| Name                             | Description                    | Required | Default                                 | Valid                           | Notes               |
-|----------------------------------|--------------------------------|:--------:|-----------------------------------------|:----------------------------------------:|---------------------|
-| NODE_ENV                         | Node environment               | no       |                                         | development,test,production           |                     |
-| PORT                             | Port number                    | no       | 3003                                    |                                           |                     |
-| POSTGRES_DB                      | Postgres database              | yes      |                                         |                                           |                     |
-| POSTGRES_USERNAME                | Postgres username              | yes      |                                         |                                           |                     |
-| POSTGRES_PASSWORD                | Postgres password              | yes      |                                         |                                           |                     |
-| CALCULATION_QUEUE_NAME           | Message queue name             | no       | calculation                             |                                           |                     |
-| CALCULATION_ENDPOINT             | Message base url               | no       | http://localhost:9324                   |                                           |                     |
-| CALCULATION_QUEUE_URL            | Message queue url              | no       | http://localhost:9324/queue/calculation |                                           |or tcp               |
-| CALCULATION_QUEUE_REGION         | AWS region                     | no       | eu-west-2                               |                                           |Ignored in local dev |
-| CALCULATION_QUEUE_ACCESS_KEY_ID  | Message access key Id          | no       |                                         |                                           |                     |
-| CALCULATION_QUEUE_ACCESS_KEY     | Message access key             | no       |                                         |                                           |                     |
-| CREATE_CALCULATION_QUEUE         | Create queue before connection | no       | true                                    | For AWS deployments must be set to false |                     |
-| SCHEDULE_QUEUE_NAME              | Message queue name             | no       | schedule                                |                                           |                     |
-| SCHEDULE_ENDPOINT                | Message base url               | no       | http://localhost:9324                   |                                           |                     |
-| SCHEDULE_QUEUE_URL               | Message queue url              | no       | http://localhost:9324/queue/schedule    |                                           |or tcp               |
-| SCHEDULE_QUEUE_REGION            | AWS region                     | no       | eu-west-2                               |                                           |Ignored in local dev |
-| SCHEDULE_QUEUE_ACCESS_KEY_ID     | Message access key Id          | no       |                                         |                                           |                     |
-| SCHEDULE_QUEUE_ACCESS_KEY        | Message access key             | no       |                                         |                                           |                     |
-| CREATE_SCHEDULE_QUEUE            | Create queue before connection | no       | true                                    | For AWS deployments must be set to false |                     |
+| Name                     | Description                    | Required | Default                          | Valid                             | Notes                |
+|--------------------------|--------------------------------|:--------:|----------------------------------|:---------------------------------:|----------------------|
+| NODE_ENV                 | Node environment               | no       |                                  | development, test, production     |                      |
+| PORT                     | Port number                    | no       | 3003                             |                                   |                      |
+| POSTGRES_DB              | Postgres database              | yes      |                                  |                                   |                      |
+| POSTGRES_USERNAME        | Postgres username              | yes      |                                  |                                   |                      |
+| POSTGRES_PASSWORD        | Postgres password              | yes      |                                  |                                   |                      |
+| PLAN_QUEUE_NAME          | Message queue name             | no       | plan                             |                                   |                      |
+| PLAN_ENDPOINT            | Message base url               | no       | http://localhost:9324            |                                   |                      |
+| PLAN_QUEUE_URL           | Message queue url              | no       | http://localhost:9324/queue/plan |                                   | or tcp               |
+| PLAN_QUEUE_REGION        | AWS region                     | no       | eu-west-2                        |                                   | Ignored in local dev |
+| PLAN_QUEUE_ACCESS_KEY_ID | Message access key Id          | no       |                                  |                                   |                      |
+| PLAN_QUEUE_ACCESS_KEY    | Message access key             | no       |                                  |                                   |                      |
+| CREATE_PLAN_QUEUE        | Create queue before connection | no       | true                             | Must be false for AWS deployments |                      |
 
 ## How to run tests
 
@@ -66,6 +59,21 @@ Alternatively, the same tests may be run locally via npm:
 npm run test
 ```
 
+### Test watcher
+
+A more convenient way to run tests in development is to use a file watcher to automatically run tests each time associated files are modified. For this purpose, the default docker-compose configuration mounts all app, test and git files into the main `app` container, enabling the test watcher to be run as shown below. The same approach may be used to execute arbitrary commands in the running app.
+
+```
+# Run unit test file watcher
+docker-compose exec app npm run test:unit-watch
+
+# Run all tests
+docker-compose exec app npm test
+
+# Open an interactive shell in the app container
+docker-compose exec app sh
+```
+
 ## Running the application
 
 The application is designed to run in containerised environments, using Docker Compose in development and Kubernetes in production.
@@ -85,14 +93,13 @@ docker-compose build
 
 ### Start and stop the service
 
-Use Docker Compose to run service locally.
+Use Docker Compose to run service locally. The default configuration will run the service on an isolated Docker network. An alternative configuration is provided for linking to other ELM services on the same Docker host.
 
-`docker-compose up`
-
-Additional Docker Compose files are provided for scenarios such as linking to other running services.
-
-Link to other services:
 ```
+# Start the service in isolation
+docker-compose up
+
+# Start service on the external `ffc-elm` Docker network
 docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
 ```
 
@@ -104,7 +111,7 @@ The service binds to a port on the host machine so it can be tested manually by 
 # Send a sample request to the /submit endpoint
 curl  -i --header "Content-Type: application/json" \
   --request POST \
-  --data '{ "claimId": "MINE123", "propertyType": "business",  "accessible": false,   "dateOfSubsidence": "2019-07-26T09:54:19.622Z",  "mineType": ["gold"] }' \
+  --data '{ "planId": "PLAN123" }' \
   http://localhost:3003/submit
 ```
 
@@ -112,23 +119,13 @@ Sample valid JSON for the `/submit` endpoint is:
 
 ```
 {
-  "claimId": "MINE123",
-  "propertyType": "business",
-  "accessible": false,
-  "dateOfSubsidence": "2019-07-26T09:54:19.622Z",
-  "mineType": ["gold"]
+  "planId": "PLAN123"
 }
 ```
 
-### Link to sibling services
-
-To test interactions with sibling services in the FFC demo application, it is necessary to connect each service to an external Docker network, along with shared dependencies such as message queues. The most convenient approach for this is to start the entire application stack from the [`ffc-demo-development`](https://github.com/DEFRA/ffc-demo-development) repository.
-
-It is also possible to run a limited subset of the application stack. See the [`ffc-demo-development`](https://github.com/DEFRA/ffc-demo-development) Readme for instructions.
-
 ### Deploy to Kubernetes
 
-For production deployments, a helm chart is included in the `.\helm` folder. This service connects to an sqs message broker, using credentials defined in [values.yaml](./helm/ffc-demo-claim-service/values.yaml), which must be made available prior to deployment.
+For production deployments, a helm chart is included in the `.\helm` folder. This service connects to an sqs message broker, using credentials defined in [values.yaml](./helm/ffc-elm-plan-service/values.yaml), which must be made available prior to deployment.
 
 Scripts are provided to test the Helm chart by deploying the service, along with an appropriate message broker, into the current Helm/Kubernetes context.
 
@@ -148,7 +145,7 @@ Access may be granted by forwarding a local port to the deployed pod:
 
 ```
 # Forward local port to the Kubernetes deployment
-kubectl port-forward --namespace=ffc-demo deployment/ffc-demo-claim-service 3003:3003
+kubectl port-forward --namespace=ffc-demo deployment/ffc-elm-plan-service 3003:3003
 ```
 
 Once the port is forwarded, the service can be accessed and tested in the same way as described in the "Test the service" section above.
@@ -188,7 +185,7 @@ The [azure-pipelines.yaml](azure-pipelines.yaml) performs the following tasks:
 - Pushes containers to the registry tagged with the PR number or release version
 - Deletes PR deployments, containers, and namepace upon merge
 
-Builds will be deployed into a namespace with the format `ffc-demo-claim-service-{identifier}` where `{identifier}` is either the release version, the PR number, or the branch name.
+Builds will be deployed into a namespace with the format `ffc-elm-plan-service-{identifier}` where `{identifier}` is either the release version, the PR number, or the branch name.
 
 A detailed description on the build pipeline and PR work flow is available in the [Defra Confluence page](https://eaflood.atlassian.net/wiki/spaces/FFCPD/pages/1281359920/Build+Pipeline+and+PR+Workflow)
 

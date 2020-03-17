@@ -8,12 +8,10 @@ jest.mock('sequelize', () => {
 })
 
 const sequelize = new Sequelize()
-const claim = require('../claim')
-const minetype = require('../minetype')
+const plan = require('../plan')
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
-db[claim.name] = claim
-db[minetype.name] = minetype
+db[plan.name] = plan
 
 module.exports = db

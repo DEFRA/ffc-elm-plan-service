@@ -1,20 +1,19 @@
 describe('Web test', () => {
   let createServer
   let server
-  let mockClaimRepository
+  let mockPlanRepository
 
   beforeAll(async () => {
-    jest.mock('../server/repository/claim-repository')
-    jest.mock('../server/repository/minetype-repository')
+    jest.mock('../server/repository/plan-repository')
     jest.mock('../server/services/message-service')
     createServer = require('../server')
-    mockClaimRepository = require('../server/repository/claim-repository')
+    mockPlanRepository = require('../server/repository/plan-repository')
   })
 
   beforeEach(async () => {
     server = await createServer()
     await server.initialize()
-    mockClaimRepository.create.mockClear()
+    mockPlanRepository.create.mockClear()
   })
 
   test('GET / route returns 404', async () => {
@@ -51,16 +50,12 @@ describe('Web test', () => {
       method: 'POST',
       url: '/submit',
       payload: {
-        claimId: 'MINE123',
-        propertyType: 'business',
-        accessible: false,
-        dateOfSubsidence: new Date(),
-        mineType: ['gold', 'iron']
+        planId: 'PLAN123'
       }
     }
 
     const response = await server.inject(options)
-    expect(mockClaimRepository.create).toHaveBeenCalledTimes(1)
+    expect(mockPlanRepository.create).toHaveBeenCalledTimes(1)
     expect(response.statusCode).toBe(200)
   })
 
@@ -72,7 +67,7 @@ describe('Web test', () => {
     }
 
     const response = await server.inject(options)
-    expect(mockClaimRepository.create).toHaveBeenCalledTimes(0)
+    expect(mockPlanRepository.create).toHaveBeenCalledTimes(0)
     expect(response.statusCode).toBe(400)
   })
 
@@ -87,8 +82,7 @@ describe('Web test', () => {
   })
 
   afterAll(async () => {
-    jest.unmock('../server/repository/claim-repository')
-    jest.unmock('../server/repository/minetype-repository')
+    jest.unmock('../server/repository/plan-repository')
     jest.unmock('../server/services/message-service')
   })
 

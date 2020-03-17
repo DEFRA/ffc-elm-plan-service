@@ -1,9 +1,8 @@
 describe('Healthy test', () => {
-  const calculationSender = {}
+  const planSender = {}
   let createServer
   let databaseService
   let messageService
-  const scheduleSender = {}
   let server
 
   beforeAll(async () => {
@@ -13,11 +12,9 @@ describe('Healthy test', () => {
     databaseService = require('../../server/services/database-service')
     messageService = require('../../server/services/message-service')
 
-    messageService.getCalculationSender = jest.fn().mockReturnValue(calculationSender)
-    messageService.getScheduleSender = jest.fn().mockReturnValue(scheduleSender)
+    messageService.getPlanSender = jest.fn().mockReturnValue(planSender)
 
-    calculationSender.isConnected = jest.fn().mockReturnValue(false)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(false)
+    planSender.isConnected = jest.fn().mockReturnValue(false)
 
     createServer = require('../../server')
   })
@@ -34,8 +31,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(true)
-    calculationSender.isConnected = jest.fn().mockReturnValue(true)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(true)
+    planSender.isConnected = jest.fn().mockReturnValue(true)
 
     const response = await server.inject(options)
 
@@ -49,8 +45,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(false)
-    calculationSender.isConnected = jest.fn().mockReturnValue(true)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(true)
+    planSender.isConnected = jest.fn().mockReturnValue(true)
 
     const response = await server.inject(options)
 
@@ -58,31 +53,14 @@ describe('Healthy test', () => {
     expect(response.payload).toBe('database unavailable')
   })
 
-  test('GET /healthy returns 503 if calculation queue not connected', async () => {
+  test('GET /healthy returns 503 if plan queue not connected', async () => {
     const options = {
       method: 'GET',
       url: '/healthy'
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(true)
-    calculationSender.isConnected = jest.fn().mockReturnValue(false)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(true)
-
-    const response = await server.inject(options)
-
-    expect(response.statusCode).toBe(200)
-    expect(response.payload).toBe('ok')
-  })
-
-  test('GET /healthy returns 503 if schedule queue not connected', async () => {
-    const options = {
-      method: 'GET',
-      url: '/healthy'
-    }
-
-    databaseService.isConnected = jest.fn().mockReturnValue(true)
-    calculationSender.isConnected = jest.fn().mockReturnValue(true)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(false)
+    planSender.isConnected = jest.fn().mockReturnValue(false)
 
     const response = await server.inject(options)
 
@@ -97,8 +75,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(false)
-    calculationSender.isConnected = jest.fn().mockReturnValue(false)
-    scheduleSender.isConnected = jest.fn().mockReturnValue(false)
+    planSender.isConnected = jest.fn().mockReturnValue(false)
 
     const response = await server.inject(options)
 

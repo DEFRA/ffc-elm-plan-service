@@ -1,8 +1,8 @@
 {
-  "name": "ffc-demo-claim-service",
-  "description": "Digital service mock to claim public money in the event property subsides into mine shaft.",
+  "name": "ffc-elm-plan-service",
+  "description": "",
   "version": "1.0.11",
-  "homepage": "https://github.com/DEFRA/mine-support-claim-service",
+  "homepage": "https://github.com/DEFRA/ffc-elm-plan-service",
   "main": "index.js",
   "scripts": {
     "migrate": "sequelize db:migrate",
@@ -15,8 +15,6 @@
   },
   "author": "Defra DDTS",
   "contributors": [
-    "John Watson <john.watson2@rpa.gov.uk>",
-    "Mark Harrop <mark.harrop@defra.gov.uk>",
     "Matthew Collins <matthew.collins@defra.gov.uk>",
     "David Bingham <david.bingham@defra.gov.uk>"
   ],

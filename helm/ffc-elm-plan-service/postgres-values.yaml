@@ -1,7 +1,7 @@
 persistence:
   enabled: false
-postgresqlDatabase: mine_claims
+postgresqlDatabase: elm_plans
 postgresqlPassword: changeme
-postgresqlUsername: postgres@mine-support2
+postgresqlUsername: postgres@elm_plans
 service:
   port: 5432

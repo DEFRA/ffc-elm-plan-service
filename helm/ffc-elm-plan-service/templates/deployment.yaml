@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ quote .Values.name }}
   namespace: {{ quote .Values.namespace }}
-  labels: {{ include "ffc-demo.labels" . | trimSuffix "\n" | indent 2 }}
+  labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 2 }}
 spec:
   priorityClassName: {{ quote .Values.container.priorityClassName }}
   replicas: {{ .Values.replicaCount }}
@@ -15,7 +15,7 @@ spec:
       maxUnavailable: {{ .Values.maxUnavailable }}
   template:
     metadata:
-      labels: {{ include "ffc-demo.labels" . | trimSuffix "\n" | indent 6 }}
+      labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 6 }}
       namespace: {{ quote .Values.namespace }}
       annotations:
         redeployOnChange: {{ quote .Values.container.redeployOnChange }}
@@ -68,34 +68,20 @@ spec:
               value: {{ quote .Values.postgresHost }}
             - name: POSTGRES_PORT
               value: {{ quote .Values.postgresPort }}
-            - name: CALCULATION_QUEUE_NAME
-              value: {{ quote .Values.container.calculationQueueName }}
-            - name: CALCULATION_ENDPOINT
-              value: {{ quote .Values.container.calculationQueueEndpoint }}
-            - name: CALCULATION_QUEUE_URL
-              value: {{ quote .Values.container.calculationQueueUrl }}
-            - name: CALCULATION_QUEUE_REGION
-              value: {{ quote .Values.container.calculationQueueRegion }}
-            - name: CALCULATION_QUEUE_ACCESS_KEY_ID
-              value: {{ quote .Values.container.calculationQueueAccessKeyId }}
-            - name: CALCULATION_QUEUE_ACCESS_KEY
-              value: {{ quote .Values.container.calculationQueueSecretAccessKey }}
-            - name: CREATE_CALCULATION_QUEUE
-              value: {{ quote .Values.container.calculationCreateQueue }}
-            - name: SCHEDULE_QUEUE_NAME
-              value: {{ quote .Values.container.scheduleQueueName }}
-            - name: SCHEDULE_ENDPOINT
-              value: {{ quote .Values.container.scheduleQueueEndpoint }}
-            - name: SCHEDULE_QUEUE_URL
-              value: {{ quote .Values.container.scheduleQueueUrl }}
-            - name: SCHEDULE_QUEUE_REGION
-              value: {{ quote .Values.container.scheduleQueueRegion }}
-            - name: SCHEDULE_QUEUE_ACCESS_KEY_ID
-              value: {{ quote .Values.container.scheduleQueueAccessKeyId }}
-            - name: SCHEDULE_QUEUE_ACCESS_KEY
-              value: {{ quote .Values.container.scheduleQueueSecretAccessKey }}
-            - name: CREATE_SCHEDULE_QUEUE
-              value: {{ quote .Values.container.scheduleCreateQueue }}
+            - name: PLAN_QUEUE_NAME
+              value: {{ quote .Values.container.planQueueName }}
+            - name: PLAN_ENDPOINT
+              value: {{ quote .Values.container.planQueueEndpoint }}
+            - name: PLAN_QUEUE_URL
+              value: {{ quote .Values.container.planQueueUrl }}
+            - name: PLAN_QUEUE_REGION
+              value: {{ quote .Values.container.planQueueRegion }}
+            - name: PLAN_QUEUE_ACCESS_KEY_ID
+              value: {{ quote .Values.container.planQueueAccessKeyId }}
+            - name: PLAN_QUEUE_ACCESS_KEY
+              value: {{ quote .Values.container.planQueueSecretAccessKey }}
+            - name: CREATE_PLAN_QUEUE
+              value: {{ quote .Values.container.planCreateQueue }}
             - name: PORT
               value: "3003"
           livenessProbe:

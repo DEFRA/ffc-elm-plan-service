@@ -2,19 +2,10 @@ const joi = require('@hapi/joi')
 
 const mqSchema = joi.object({
 
-  calculationQueue: {
-    name: joi.string().default('calculation'),
+  planQueue: {
+    name: joi.string().default('plan'),
     endpoint: joi.string().default('http://localhost:9324'),
-    queueUrl: joi.string().default('http://localhost:9324/queue/calculation'),
-    region: joi.string().default('eu-west-2'),
-    accessKeyId: joi.string(),
-    secretAccessKey: joi.string(),
-    createQueue: joi.bool().default(true)
-  },
-  scheduleQueue: {
-    name: joi.string().default('schedule'),
-    endpoint: joi.string().default('http://localhost:9324'),
-    queueUrl: joi.string().default('http://localhost:9324/queue/schedule'),
+    queueUrl: joi.string().default('http://localhost:9324/queue/plan'),
     region: joi.string().default('eu-west-2'),
     accessKeyId: joi.string(),
     secretAccessKey: joi.string(),
@@ -23,23 +14,14 @@ const mqSchema = joi.object({
 })
 
 const mqConfig = {
-  calculationQueue: {
-    name: process.env.CALCULATION_QUEUE_NAME,
-    endpoint: process.env.CALCULATION_ENDPOINT,
-    queueUrl: process.env.CALCULATION_QUEUE_URL,
-    region: process.env.CALCULATION_QUEUE_REGION,
-    accessKeyId: process.env.CALCULATION_QUEUE_ACCESS_KEY_ID,
-    secretAccessKey: process.env.CALCULATION_QUEUE_ACCESS_KEY,
-    createQueue: process.env.CREATE_CALCULATION_QUEUE
-  },
-  scheduleQueue: {
-    name: process.env.SCHEDULE_QUEUE_NAME,
-    endpoint: process.env.SCHEDULE_ENDPOINT,
-    queueUrl: process.env.SCHEDULE_QUEUE_URL,
-    region: process.env.SCHEDULE_QUEUE_REGION,
-    accessKeyId: process.env.SCHEDULE_QUEUE_ACCESS_KEY_ID,
-    secretAccessKey: process.env.SCHEDULE_QUEUE_ACCESS_KEY,
-    createQueue: process.env.CREATE_SCHEDULE_QUEUE
+  planQueue: {
+    name: process.env.PLAN_QUEUE_NAME,
+    endpoint: process.env.PLAN_ENDPOINT,
+    queueUrl: process.env.PLAN_QUEUE_URL,
+    region: process.env.PLAN_QUEUE_REGION,
+    accessKeyId: process.env.PLAN_QUEUE_ACCESS_KEY_ID,
+    secretAccessKey: process.env.PLAN_QUEUE_ACCESS_KEY,
+    createQueue: process.env.CREATE_PLAN_QUEUE
   }
 }
 
@@ -52,10 +34,8 @@ if (mqResult.error) {
   throw new Error(`The message queue config is invalid. ${mqResult.error.message}`)
 }
 
-const calculationQueueConfig = { ...mqResult.value.messageQueue, ...mqResult.value.calculationQueue }
-const scheduleQueueConfig = { ...mqResult.value.messageQueue, ...mqResult.value.scheduleQueue }
+const planQueueConfig = { ...mqResult.value.messageQueue, ...mqResult.value.planQueue }
 
 module.exports = {
-  calculationQueueConfig: calculationQueueConfig,
-  scheduleQueueConfig: scheduleQueueConfig
+  planQueueConfig: planQueueConfig
 }

@@ -2,23 +2,18 @@ const createQueue = require('./messaging/create-queue')
 const MessageSender = require('./messaging/message-sender')
 const config = require('../config')
 
-const calculationSender = new MessageSender(config.calculationQueueConfig, config.calculationQueueConfig.queueUrl)
-const scheduleSender = new MessageSender(config.scheduleQueueConfig, config.scheduleQueueConfig.queueUrl)
+const planSender = new MessageSender(config.planQueueConfig, config.planQueueConfig.queueUrl)
 
 async function createQueuesIfRequired () {
-  if (config.calculationQueueConfig.createQueue) {
-    await createQueue(config.calculationQueueConfig.name, config.calculationQueueConfig)
-  }
-  if (config.scheduleQueueConfig.createQueue) {
-    await createQueue(config.scheduleQueueConfig.name, config.scheduleQueueConfig)
+  if (config.planQueueConfig.createQueue) {
+    await createQueue(config.planQueueConfig.name, config.planQueueConfig)
   }
 }
 
-async function publishClaim (claim) {
+async function publishPlan (plan) {
   try {
     await Promise.all([
-      calculationSender.sendMessage(claim),
-      scheduleSender.sendMessage(claim)
+      planSender.sendMessage(plan)
     ])
   } catch (err) {
     console.log(err)
@@ -27,6 +22,6 @@ async function publishClaim (claim) {
 }
 
 module.exports = {
-  publishClaim,
+  publishPlan,
   createQueuesIfRequired
 }

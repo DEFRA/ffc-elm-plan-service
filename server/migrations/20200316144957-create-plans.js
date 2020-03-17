@@ -1,20 +1,11 @@
 'use strict'
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('claims', {
-      claimId: {
+    return queryInterface.createTable('plans', {
+      planId: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING
-      },
-      propertyType: {
-        type: Sequelize.STRING
-      },
-      dateOfSubsidence: {
-        type: Sequelize.DATE
-      },
-      accessible: {
-        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -27,6 +18,6 @@ module.exports = {
     })
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('claims')
+    return queryInterface.dropTable('plans')
   }
 }

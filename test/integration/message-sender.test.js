@@ -4,20 +4,20 @@ const purgeQueue = require('../../server/services/messaging/purge-queue')
 
 const config = require('../../server/config')
 const queueName = 'testq1'
-const queueUrl = `${config.scheduleQueueConfig.endpoint}/queue/${queueName}`
+const queueUrl = `${config.planQueueConfig.endpoint}/queue/${queueName}`
 
 beforeAll(async () => {
-  await createQueue(queueName, config.scheduleQueueConfig)
+  await createQueue(queueName, config.planQueueConfig)
 })
 
 afterAll(async () => {
-  await purgeQueue(queueUrl, config.scheduleQueueConfig)
+  await purgeQueue(queueUrl, config.planQueueConfig)
 })
 
 describe('send message', () => {
   test('sends a json message', async () => {
     jest.setTimeout(30000)
-    const sender = new MessageSender(config.scheduleQueueConfig, queueUrl)
+    const sender = new MessageSender(config.planQueueConfig, queueUrl)
     const result = await sender.sendMessage({ greeting: 'test message' })
     console.log(result)
     expect(result).toBeDefined()
