@@ -1,6 +1,3 @@
-name: ffc-elm-plan-service
-namespace: ffc-elm
-imagePullSecret: myregistrykey
-container:
-  allowPrivilegeEscalation: true
+deployment:
   imagePullPolicy: Always
+  imagePullSecret: myregistrykey

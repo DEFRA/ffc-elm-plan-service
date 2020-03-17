@@ -66,9 +66,9 @@ node {
             /container.planQueueUrl="$planQueueUrl"/,
             /container.planCreateQueue="false"/,
             /container.redeployOnChange="$pr-$BUILD_NUMBER"/,
-            /postgresExternalName="$postgresExternalName"/,
-            /postgresPassword="$postgresPassword"/,
-            /postgresUsername="$postgresUsername"/,
+            /postgres.externalName="$postgresExternalName"/,
+            /postgres.password="$postgresPassword"/,
+            /postgres.username="$postgresUsername"/,
             /labels.version="$containerTag"/
           ].join(',')
 

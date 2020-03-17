@@ -1,61 +1,81 @@
+# environment is the type of environment we're deploying to, e.g. "development" or "production"
 environment: production
-postgresUsername: postgres@elm_plans
-postgresPassword: changeme
-postgresDatabase: elm_plans
-# postgresHost is the host name of the PostgreSQL service
-postgresHost: ffc-elm-plans-postgres
-# postgresExternalName is the external host name to which PostgreSQL
-# requests should be forwarded. If empty, PostgreSQL is assumed to be
-# within the cluster and accessible via postgresHost
-postgresExternalName:
-postgresPort: 5432
-name: ffc-elm-plan-service
-namespace: ffc-elm
-workstream: ffc-elm
+# image is the identifier for the Docker image to use for the main deployment
 image: ffc-elm-plan-service
-imagePullSecret:
+# name is the name to set in metadata for deployed resources
+name: ffc-elm-plan-service
+# namespace is the namespace to deploy into
+namespace: ffc-elm
+# workstream is the FFC workstream responsible for this deployment, used for rolebindings
+workstream: ffc-elm
+
+# deployment collects options for this chart's Deployment template
+deployment:
+  allowPrivilegeEscalation: false
+  args: ["npm --no-update-notifier run migrate && node index"]
+  command: ["/bin/sh","-c"]
+  imagePullPolicy: Never
+  imagePullSecret: ""
+  limitCpu: 120m
+  limitMemory: 120Mi
+  maxSurge: 1
+  maxUnavailable: 1
+  minReadySeconds: 10
+  priorityClassName: low
+  readOnlyRootFilesystem: true
+  redeployOnChange: update this field to force a change
+  replicaCount: 1
+  requestMemory: 60Mi
+  requestCpu: 60m
+  restartPolicy: Always
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# labels collects values for some standard labels to apply to deployed resources
 labels:
-  instance:
-  version: 1.0.0
   component: service
+  instance: ""
+  version: 1.0.0
+
+# postgres collects connection details for interacting with the required Postgres database
+postgres:
+  database: elm_plans
+  # postgres.externalName is the external host name to which PostgreSQL
+  # requests should be forwarded. If empty, PostgreSQL is assumed to be
+  # within the cluster and accessible at postgres.host
+  externalName:
+  host: ffc-elm-plans-postgres
+  password: changeme
+  username: postgres@elm_plans
+  port: 5432
+
+# probes collects liveness and readiness probe details for this chart's Deployment
+probes:
+  livenessProbe:
+    path: /healthz
+    port: 3003
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    path: /healthy
+    port: 3003
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+
+# queues collects connection details for interacting with required message queues
+queues:
+  planQueue:
+    accessKeyId: elasticmq
+    create: true
+    endpoint: http://ffc-elm-plan-message-queue:9324
+    name: plan
+    region: eu-west-2
+    secretAccessKey: elasticmq
+    url: http://ffc-elm-plan-message-queue:9324/queue/plan
+
+# service collects options for this chart's main Service template
 service:
   type: ClusterIP
   port: 80
-container:
-  priorityClassName: low
-  imagePullPolicy: IfNotPresent
-  redeployOnChange: update this field to force a change
-  requestMemory: 60Mi
-  requestCpu: 60m
-  limitMemory: 120Mi
-  limitCpu: 120m
-  runAsNonRoot: true
-  runAsUser: 1000
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  restartPolicy: Always
-  command: ["/bin/sh","-c"]
-  args: ["npm --no-update-notifier run migrate && node index"]
-  planQueueName: plan
-  planQueueEndpoint: http://ffc-elm-plan-message-queue:9324
-  planQueueUrl: http://ffc-elm-plan-message-queue:9324/queue/plan
-  planQueueRegion: eu-west-2
-  planQueueAccessKeyId: elasticmq
-  planQueueSecretAccessKey: elasticmq
-  planCreateQueue: true
-replicaCount: 1
-minReadySeconds: 10
-maxSurge: 1
-maxUnavailable: 1
-livenessProbe:
-  path: /healthz
-  port: 3003
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  failureThreshold: 3
-readinessProbe:
-  path: /healthy
-  port: 3003
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  failureThreshold: 3

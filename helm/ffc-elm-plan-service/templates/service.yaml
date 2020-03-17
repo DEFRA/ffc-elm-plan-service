@@ -1,16 +1,16 @@
-{{- if quote .Values.postgresExternalName }}
+{{- if quote .Values.postgres.externalName }}
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ quote .Values.postgresHost }}
+  name: {{ quote .Values.postgres.host }}
   namespace: {{ quote .Values.namespace }}
   labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 2 }}
 spec:
   type: ExternalName
-  externalName: {{ quote .Values.postgresExternalName }}
+  externalName: {{ quote .Values.postgres.externalName }}
   ports:
     - name: port
-      port: {{ .Values.postgresPort }}
+      port: {{ .Values.postgres.port }}
 {{- end }}
 ---
 apiVersion: v1

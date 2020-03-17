@@ -20,7 +20,3 @@
 .idea/
 *.tmproj
 .vscode/
-# Development values
-development-values.yaml
-postgres-values.yaml
-artemis-values.yaml
