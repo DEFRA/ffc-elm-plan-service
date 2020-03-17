@@ -4,11 +4,13 @@ def defraUtils = new DefraUtils()
 
 def containerSrcFolder = '\\/home\\/node'
 def containerTag = ''
+def dockerTestService = 'app'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
 def pr = ''
 def serviceName = 'ffc-elm-plan-service'
+def serviceNamespace = 'ffc-elm'
 def sonarQubeEnv = 'SonarQube'
 def sonarScanner = 'SonarScanner'
 def timeoutInMinutes = 5
@@ -29,7 +31,7 @@ node {
       defraUtils.buildTestImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, serviceName, BUILD_NUMBER)
     }
     stage('Run tests') {
-      defraUtils.runTests(serviceName, serviceName, BUILD_NUMBER)
+      defraUtils.runTests(serviceName, dockerTestService, BUILD_NUMBER)
     }
     stage('Create Test Report JUnit'){
       defraUtils.createTestReportJUnit()
@@ -90,13 +92,16 @@ node {
           defraUtils.triggerRelease(containerTag, serviceName, containerTag, gitToken)
         }
       }
-      stage('Trigger Deployment') {
-        withCredentials([
-          string(credentialsId: 'claim-service-deploy-token', variable: 'jenkinsToken'),
-          string(credentialsId: 'claim-service-job-deploy-name', variable: 'deployJobName')
-        ]) {
-          defraUtils.triggerDeploy(JENKINS_DEPLOY_SITE_ROOT, deployJobName, jenkinsToken, ['chartVersion': containerTag])
-        }
+      stage('Deploy master') {
+        def helmValues = [
+          /container.redeployOnChange="$BUILD_NUMBER"/
+        ].join(',')
+
+        def extraCommands = [
+          "--set $helmValues"
+        ].join(' ')
+
+        defraUtils.deployRemoteChart(serviceNamespace, serviceName, containerTag, extraCommands)
       }
     }
     if (mergedPrNo != '') {
