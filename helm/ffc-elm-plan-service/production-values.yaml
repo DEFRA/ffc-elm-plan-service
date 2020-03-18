@@ -1,5 +1,0 @@
-environment: production
-image: 171014905211.dkr.ecr.eu-west-2.amazonaws.com/ffc-elm-plan-service
-
-deployment:
-  imagePullPolicy: Always

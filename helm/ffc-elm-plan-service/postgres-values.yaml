@@ -2,6 +2,6 @@ persistence:
   enabled: false
 postgresqlDatabase: elm_plans
 postgresqlPassword: changeme
-postgresqlUsername: postgres@elm_plans
+postgresqlUsername: postgres@ffc_elm_plans
 service:
   port: 5432
