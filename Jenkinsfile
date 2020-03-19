@@ -1,4 +1,4 @@
-@Library('defra-library@3.0.1')
+@Library('defra-library@4.0.0')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -62,6 +62,7 @@ node {
       }
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, useIfNotExists=false)
+        defraUtils.provisionPrSqsQueue( 'ffc-elm-plan-service', pr, 'plan-events', 'ELM', 'ELM', 'Environmental Land Management');
       }
       stage('Helm install') {
         withCredentials([
@@ -138,6 +139,7 @@ node {
       }
       stage('Remove PR infrastructure') {
         defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, pr)
+        defraUtils.destroyPrSqsQueues('ffc-elm-plan-service', mergedPrNo);
       }
     }
     stage('Set GitHub status as success'){
