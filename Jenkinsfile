@@ -4,11 +4,16 @@ def defraUtils = new DefraUtils()
 
 def containerSrcFolder = '\\/home\\/node'
 def containerTag = ''
+def cscServiceCode = 'ELM'
+def cscServiceName = 'ELM'
+def cscServiceType = 'Environmental Land Management'
 def dockerTestService = 'app'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
+def planQueue = 'devffc-elm-plan-test'
 def mergedPrNo = ''
 def pr = ''
+def prPlanQueueSuffix = 'plan-events'
 def serviceName = 'ffc-elm-plan-service'
 def serviceNamespace = 'ffc-elm'
 def sonarQubeEnv = 'SonarQube'
@@ -55,25 +60,26 @@ node {
       stage('Helm install') {
         withCredentials([
           string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
-          string(credentialsId: 'plan-queue-url-pr', variable: 'planQueueUrl'),
           string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
           string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
           string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-pr', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
-            /container.planQueueEndpoint="$planQueueEndpoint"/,
-            /container.planQueueUrl="$planQueueUrl"/,
-            /container.planCreateQueue="false"/,
-            /container.redeployOnChange="$pr-$BUILD_NUMBER"/,
-            /postgres.externalName="$postgresExternalName"/,
-            /postgres.password="$postgresPassword"/,
-            /postgres.username="$postgresUsername"/,
-            /labels.version="$containerTag"/
+            /container.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
+            /labels.version="${containerTag}"/,
+            /postgres.externalName="${postgresExternalName}"/,
+            /postgres.password="${postgresPassword}"/,
+            /postgres.username="${postgresUsername}"/,
+            /queues.planQueue.accessKeyId="${planQueueAccessKeyId}"/,
+            /queues.planQueue.create="false"/,
+            /queues.planQueue.endpoint="${planQueueEndpoint}"/,
+            /queues.planQueue.name="${serviceName}-pr${pr}-${prPlanQueueSuffix}"/,
+            /queues.planQueue.secretAccessKey="${planQueueSecretAccessKey}"/
           ].join(',')
 
           def extraCommands = [
-            "--set $helmValues"
+            "--set ${helmValues}"
           ].join(' ')
 
           defraUtils.deployChart(KUBE_CREDENTIALS_ID, DOCKER_REGISTRY, serviceName, containerTag, extraCommands)
@@ -92,15 +98,32 @@ node {
         }
       }
       stage('Deploy master') {
-        def helmValues = [
-          /container.redeployOnChange="$BUILD_NUMBER"/
-        ].join(',')
+        withCredentials([
+          string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
+          string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
+          string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
+          string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
+          usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
+        ]) {
+          def helmValues = [
+            /container.redeployOnChange="${BUILD_NUMBER}"/
+            /labels.version="${containerTag}"/,
+            /postgres.externalName="${postgresExternalName}"/,
+            /postgres.password="${postgresPassword}"/,
+            /postgres.username="${postgresUsername}"/,
+            /queues.planQueue.accessKeyId="${planQueueAccessKeyId}"/,
+            /queues.planQueue.create="false"/,
+            /queues.planQueue.endpoint="${planQueueEndpoint}"/,
+            /queues.planQueue.name="${planQueue}"/,
+            /queues.planQueue.secretAccessKey="${planQueueSecretAccessKey}"/
+          ].join(',')
 
-        def extraCommands = [
-          "--set $helmValues"
-        ].join(' ')
+          def extraCommands = [
+            "--set ${helmValues}"
+          ].join(' ')
 
-        defraUtils.deployRemoteChart(serviceNamespace, serviceName, containerTag, extraCommands)
+          defraUtils.deployRemoteChart(serviceNamespace, serviceName, containerTag, extraCommands)
+        }
       }
     }
     if (mergedPrNo != '') {
