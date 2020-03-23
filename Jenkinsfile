@@ -12,8 +12,11 @@ def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def planQueue = 'devffc-elm-plan-test'
 def mergedPrNo = ''
+def postgresUserCredId = 'ffc-elm-plan-service-postgres-user-jenkins'
 def pr = ''
 def prPlanQueueSuffix = 'plan-events'
+def prPostgresDatabaseName = 'ffc_elm_plan'
+def prPostgresExternalNameCredId = 'ffc-elm-postgres-external-name-pr'
 def serviceName = 'ffc-elm-plan-service'
 def serviceNamespace = 'ffc-elm'
 def sonarQubeEnv = 'SonarQube'
@@ -57,13 +60,16 @@ node {
       stage('Verify version incremented') {
         defraUtils.verifyPackageJsonVersionIncremented()
       }
+      stage('Provision PR infrastructure') {
+        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, useIfNotExists=false)
+      }
       stage('Helm install') {
         withCredentials([
           string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
           string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
           string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
-          string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
-          usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-pr', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
+          string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
+          usernamePassword(credentialsId: postgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
             /container.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
@@ -102,7 +108,7 @@ node {
           string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
           string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
           string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
-          string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
+          string(credentialsId: 'ffc-elm-postgres-external-name-master', variable: 'postgresExternalName'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
@@ -129,6 +135,9 @@ node {
     if (mergedPrNo != '') {
       stage('Remove merged PR') {
         defraUtils.undeployChart(KUBE_CREDENTIALS_ID, serviceName, mergedPrNo)
+      }
+      stage('Remove PR infrastructure') {
+        defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, pr)
       }
     }
     stage('Set GitHub status as success'){
