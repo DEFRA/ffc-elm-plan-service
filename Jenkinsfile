@@ -103,7 +103,7 @@ node {
           string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
           string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
           string(credentialsId: 'postgres-external-name-pr', variable: 'postgresExternalName'),
-          usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
+          usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
             /container.redeployOnChange="${BUILD_NUMBER}"/
