@@ -5,7 +5,6 @@ metadata:
   namespace: {{ quote .Values.namespace }}
   labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 2 }}
 spec:
-  priorityClassName: {{ quote .Values.deployment.priorityClassName }}
   replicas: {{ .Values.deployment.replicaCount }}
   minReadySeconds: {{ .Values.deployment.minReadySeconds }}
   strategy:
@@ -20,6 +19,10 @@ spec:
       annotations:
         redeployOnChange: {{ quote .Values.deployment.redeployOnChange }}
     spec:
+      priorityClassName: {{ quote .Values.deployment.priorityClassName }}
+      {{- if .Values.serviceAccount.roleArn }}
+      serviceAccountName: {{ quote .Values.serviceAccount.name }}
+      {{- end }}
       restartPolicy: {{ quote .Values.deployment.restartPolicy }}
       {{- if .Values.deployment.imagePullSecret }}
       imagePullSecrets:
@@ -58,6 +61,8 @@ spec:
           env:
             - name: NODE_ENV
               value: {{ quote .Values.environment }}
+            - name: PORT
+              value: "3003"
             - name: POSTGRES_USERNAME
               value: {{ quote .Values.postgres.username }}
             - name: POSTGRES_PASSWORD
@@ -68,22 +73,14 @@ spec:
               value: {{ quote .Values.postgres.host }}
             - name: POSTGRES_PORT
               value: {{ quote .Values.postgres.port }}
+            - name: PLAN_QUEUE_CREATE
+              value: {{ quote .Values.queues.planQueue.create }}
             - name: PLAN_QUEUE_NAME
               value: {{ quote .Values.queues.planQueue.name }}
-            - name: PLAN_ENDPOINT
+            - name: PLAN_QUEUE_ENDPOINT
               value: {{ quote .Values.queues.planQueue.endpoint }}
-            - name: PLAN_QUEUE_URL
-              value: {{ quote .Values.queues.planQueue.url }}
             - name: PLAN_QUEUE_REGION
               value: {{ quote .Values.queues.planQueue.region }}
-            - name: PLAN_QUEUE_ACCESS_KEY_ID
-              value: {{ quote .Values.queues.planQueue.accessKeyId }}
-            - name: PLAN_QUEUE_ACCESS_KEY
-              value: {{ quote .Values.queues.planQueue.secretAccessKey }}
-            - name: CREATE_PLAN_QUEUE
-              value: {{ quote .Values.queues.planQueue.create }}
-            - name: PORT
-              value: "3003"
           livenessProbe:
             httpGet:
               path: {{ quote .Values.probes.livenessProbe.path }}

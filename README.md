@@ -25,18 +25,16 @@ The following environment variables are required by the application container. V
 
 | Name                     | Description                    | Required | Default                          | Valid                             | Notes                |
 |--------------------------|--------------------------------|:--------:|----------------------------------|:---------------------------------:|----------------------|
-| NODE_ENV                 | Node environment               | no       |                                  | development, test, production     |                      |
+| NODE_ENV                 | Node environment               | no       |                                  | development, test, production     |                    |
 | PORT                     | Port number                    | no       | 3003                             |                                   |                      |
 | POSTGRES_DB              | Postgres database              | yes      |                                  |                                   |                      |
 | POSTGRES_USERNAME        | Postgres username              | yes      |                                  |                                   |                      |
 | POSTGRES_PASSWORD        | Postgres password              | yes      |                                  |                                   |                      |
+| PLAN_QUEUE_CREATE        | Create queue before connection | no       | true                             | Must be false for AWS deployments |                       |
 | PLAN_QUEUE_NAME          | Message queue name             | no       | plan                             |                                   |                      |
-| PLAN_ENDPOINT            | Message base url               | no       | http://localhost:9324            |                                   |                      |
+| PLAN_QUEUE_ENDPOINT      | Message base url               | no       | http://localhost:9324            |                                   |                      |
 | PLAN_QUEUE_URL           | Message queue url              | no       | http://localhost:9324/queue/plan |                                   | or tcp               |
 | PLAN_QUEUE_REGION        | AWS region                     | no       | eu-west-2                        |                                   | Ignored in local dev |
-| PLAN_QUEUE_ACCESS_KEY_ID | Message access key Id          | no       |                                  |                                   |                      |
-| PLAN_QUEUE_ACCESS_KEY    | Message access key             | no       |                                  |                                   |                      |
-| CREATE_PLAN_QUEUE        | Create queue before connection | no       | true                             | Must be false for AWS deployments |                      |
 
 ## How to run tests
 
@@ -145,7 +143,7 @@ Access may be granted by forwarding a local port to the deployed pod:
 
 ```
 # Forward local port to the Kubernetes deployment
-kubectl port-forward --namespace=ffc-demo deployment/ffc-elm-plan-service 3003:3003
+kubectl port-forward --namespace=ffc-elm deployment/ffc-elm-plan-service 3003:3003
 ```
 
 Once the port is forwarded, the service can be accessed and tested in the same way as described in the "Test the service" section above.
