@@ -66,15 +66,18 @@ probes:
 # queues collects connection details for interacting with required message queues
 queues:
   planCommandQueue:
-    accessKeyId: elasticmq
     create: true
     endpoint: http://ffc-elm-plan-message-queue:9324
     name: ffc-elm-plan-command
     region: eu-west-2
-    secretAccessKey: elasticmq
     url: http://ffc-elm-plan-message-queue:9324/queue/ffc-elm-plan-command
 
 # service collects options for this chart's main Service template
 service:
   type: ClusterIP
   port: 80
+
+# serviceAccount collects options for the service account to be created
+serviceAccount:
+  name: ffc-elm-plan-service-account
+  roleArn:

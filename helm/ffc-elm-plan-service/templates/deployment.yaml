@@ -24,6 +24,9 @@ spec:
         redeployOnChange: {{ quote .Values.deployment.redeployOnChange }}
     spec:
       priorityClassName: {{ quote .Values.deployment.priorityClassName }}
+      {{- if .Values.serviceAccount.roleArn }}
+      serviceAccountName: {{ quote .Values.serviceAccount.name }}
+      {{- end }}
       restartPolicy: {{ quote .Values.deployment.restartPolicy }}
       {{- if .Values.deployment.imagePullSecret }}
       imagePullSecrets:
@@ -62,6 +65,8 @@ spec:
           env:
             - name: NODE_ENV
               value: {{ quote .Values.environment }}
+            - name: PORT
+              value: "3003"
             - name: POSTGRES_USERNAME
               value: {{ quote .Values.postgres.username }}
             - name: POSTGRES_PASSWORD
@@ -72,6 +77,8 @@ spec:
               value: {{ quote .Values.postgres.host }}
             - name: POSTGRES_PORT
               value: {{ quote .Values.postgres.port }}
+            - name: PLAN_QUEUE_CREATE
+              value: {{ quote .Values.queues.planCommandQueue.create }}
             - name: PLAN_QUEUE_NAME
               value: {{ quote .Values.queues.planCommandQueue.name }}
             - name: PLAN_ENDPOINT
@@ -80,10 +87,6 @@ spec:
               value: {{ quote .Values.queues.planCommandQueue.url }}
             - name: PLAN_QUEUE_REGION
               value: {{ quote .Values.queues.planCommandQueue.region }}
-            - name: PLAN_QUEUE_ACCESS_KEY_ID
-              value: {{ quote .Values.queues.planCommandQueue.accessKeyId }}
-            - name: PLAN_QUEUE_ACCESS_KEY
-              value: {{ quote .Values.queues.planCommandQueue.secretAccessKey }}
             - name: CREATE_PLAN_QUEUE
               value: {{ quote .Values.queues.planCommandQueue.create }}
             - name: PORT

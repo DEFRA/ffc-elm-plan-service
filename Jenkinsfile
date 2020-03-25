@@ -65,9 +65,8 @@ node {
       }
       stage('Helm install') {
         withCredentials([
+          string(credentialsId: 'ffc-elm-plan-service-account-role-arn', variable: 'serviceAccountRoleArn'),
           string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-pr', variable: 'planCommandQueueEndpoint'),
-          string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-id-write', variable: 'planCommandQueueAccessKeyId'),
-          string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-write', variable: 'planCommandQueueSecretAccessKey'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
           usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
         ]) {
@@ -77,12 +76,11 @@ node {
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
             /postgres.username="${postgresUsername}"/,
-            /queues.planCommandQueue.accessKeyId="${planCommandQueueAccessKeyId}"/,
-            /queues.planCommandQueue.create="false"/,
+            /queues.planCommandQueue.create="true"/,
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
-            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${prPlanCommandQueueName}"/
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${prPlanCommandQueueName}"/,
+            /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
 
           def extraCommands = [
@@ -107,9 +105,8 @@ node {
       stage('Deploy master') {
         withCredentials([
           string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-master', variable: 'planCommandQueueEndpoint'),
-          string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-id-write', variable: 'planCommandQueueAccessKeyId'),
-          string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-write', variable: 'planCommandQueueSecretAccessKey'),
           string(credentialsId: 'ffc-elm-postgres-external-name-master', variable: 'postgresExternalName'),
+          string(credentialsId: 'ffc-elm-plan-service-account-role-arn', variable: 'serviceAccountRoleArn'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
@@ -118,12 +115,11 @@ node {
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
             /postgres.username="${postgresUsername}"/,
-            /queues.planCommandQueue.accessKeyId="${planCommandQueueAccessKeyId}"/,
             /queues.planCommandQueue.create="false"/,
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${planCommandQueueName}"/,
-            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${planCommandQueueName}"/
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${planCommandQueueName}"/,
+            /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
 
           def extraCommands = [
