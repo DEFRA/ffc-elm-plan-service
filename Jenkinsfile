@@ -66,8 +66,8 @@ node {
       stage('Helm install') {
         withCredentials([
           string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
-          string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
-          string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
+          string(credentialsId: 'ffc-elm-plan-sqs-queue-access-key-id-write', variable: 'planQueueAccessKeyId'),
+          string(credentialsId: 'ffc-elm-plan-sqs-queue-access-key-write', variable: 'planQueueSecretAccessKey'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
           usernamePassword(credentialsId: postgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
@@ -106,8 +106,8 @@ node {
       stage('Deploy master') {
         withCredentials([
           string(credentialsId: 'sqs-queue-endpoint', variable: 'planQueueEndpoint'),
-          string(credentialsId: 'plan-queue-access-key-id-send', variable: 'planQueueAccessKeyId'),
-          string(credentialsId: 'plan-queue-secret-access-key-send', variable: 'planQueueSecretAccessKey'),
+          string(credentialsId: 'ffc-elm-plan-sqs-queue-access-key-id-write', variable: 'planQueueAccessKeyId'),
+          string(credentialsId: 'ffc-elm-plan-sqs-queue-access-key-write', variable: 'planQueueSecretAccessKey'),
           string(credentialsId: 'ffc-elm-postgres-external-name-master', variable: 'postgresExternalName'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
