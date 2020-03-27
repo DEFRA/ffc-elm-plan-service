@@ -27,7 +27,7 @@ node {
   checkout scm
   // try {
     stage('Debug') {
-      sh "nslookup devldnffc-elm-001.cfsphpgocbip.eu-west-2.rds.amazonaws.com"
+      sh "nslookup ffc-dev-rds.ffc-dev.aws-int.defra.cloud"
       exit 1
     }
   //   stage('Set GitHub status as pending'){
