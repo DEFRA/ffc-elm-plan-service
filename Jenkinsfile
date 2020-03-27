@@ -62,7 +62,7 @@ node {
         // defraUtils.verifyPackageJsonVersionIncremented()
       }
       stage('Provision PR infrastructure') {
-        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, useIfNotExists=false)
+        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
       }
       stage('Helm install') {
         withCredentials([
