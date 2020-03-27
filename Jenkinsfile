@@ -58,7 +58,8 @@ node {
     }
     if (pr != '') {
       stage('Verify version incremented') {
-        defraUtils.verifyPackageJsonVersionIncremented()
+        // Remove version increment check for initial version - the check fails if no previous version exists
+        // defraUtils.verifyPackageJsonVersionIncremented()
       }
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, useIfNotExists=false)
