@@ -23,7 +23,7 @@ if (result.error) {
 const value = {
   ...result.value,
   database: databaseConfig,
-  planQueueConfig: mqConfig.planQueueConfig,
+  planCommandQueueConfig: mqConfig.planCommandQueueConfig,
   isDev: result.value.env === 'development',
   isProd: result.value.env === 'production'
 }

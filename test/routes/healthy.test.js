@@ -1,5 +1,5 @@
 describe('Healthy test', () => {
-  const planSender = {}
+  const planCommandSender = {}
   let createServer
   let databaseService
   let messageService
@@ -12,9 +12,9 @@ describe('Healthy test', () => {
     databaseService = require('../../server/services/database-service')
     messageService = require('../../server/services/message-service')
 
-    messageService.getPlanSender = jest.fn().mockReturnValue(planSender)
+    messageService.getplanCommandSender = jest.fn().mockReturnValue(planCommandSender)
 
-    planSender.isConnected = jest.fn().mockReturnValue(false)
+    planCommandSender.isConnected = jest.fn().mockReturnValue(false)
 
     createServer = require('../../server')
   })
@@ -31,7 +31,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(true)
-    planSender.isConnected = jest.fn().mockReturnValue(true)
+    planCommandSender.isConnected = jest.fn().mockReturnValue(true)
 
     const response = await server.inject(options)
 
@@ -45,7 +45,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(false)
-    planSender.isConnected = jest.fn().mockReturnValue(true)
+    planCommandSender.isConnected = jest.fn().mockReturnValue(true)
 
     const response = await server.inject(options)
 
@@ -60,7 +60,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(true)
-    planSender.isConnected = jest.fn().mockReturnValue(false)
+    planCommandSender.isConnected = jest.fn().mockReturnValue(false)
 
     const response = await server.inject(options)
 
@@ -75,7 +75,7 @@ describe('Healthy test', () => {
     }
 
     databaseService.isConnected = jest.fn().mockReturnValue(false)
-    planSender.isConnected = jest.fn().mockReturnValue(false)
+    planCommandSender.isConnected = jest.fn().mockReturnValue(false)
 
     const response = await server.inject(options)
 

@@ -2,18 +2,18 @@ const createQueue = require('./messaging/create-queue')
 const MessageSender = require('./messaging/message-sender')
 const config = require('../config')
 
-const planSender = new MessageSender(config.planQueueConfig, config.planQueueConfig.queueUrl)
+const planCommandSender = new MessageSender(config.planCommandQueueConfig, config.planCommandQueueConfig.queueUrl)
 
 async function createQueuesIfRequired () {
-  if (config.planQueueConfig.createQueue) {
-    await createQueue(config.planQueueConfig.name, config.planQueueConfig)
+  if (config.planCommandQueueConfig.createQueue) {
+    await createQueue(config.planCommandQueueConfig.name, config.planCommandQueueConfig)
   }
 }
 
 async function publishPlan (plan) {
   try {
     await Promise.all([
-      planSender.sendMessage(plan)
+      planCommandSender.sendMessage(plan)
     ])
   } catch (err) {
     console.log(err)
