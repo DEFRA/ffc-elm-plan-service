@@ -11,11 +11,12 @@ def dockerTestService = 'app'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
-def postgresUserCredId = 'ffc-elm-plan-service-postgres-user-jenkins'
+def planCommandQueueName = 'devffc-elm-plan-command-prod'
 def pr = ''
-def prplanCommandQueueSuffix = 'plan-command'
+def prPlanCommandQueueName = 'devffc-elm-plan-command-test'
 def prPostgresDatabaseName = 'ffc_elm_plan'
 def prPostgresExternalNameCredId = 'ffc-elm-postgres-external-name-pr'
+def prPostgresUserCredId = 'ffc-elm-plan-service-postgres-user-jenkins'
 def serviceName = 'ffc-elm-plan-service'
 def serviceNamespace = 'ffc-elm'
 def sonarQubeEnv = 'SonarQube'
@@ -61,7 +62,7 @@ node {
         // defraUtils.verifyPackageJsonVersionIncremented()
       }
       stage('Provision PR infrastructure') {
-        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
+        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
       }
       stage('Helm install') {
         withCredentials([
@@ -69,7 +70,7 @@ node {
           string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-id-write', variable: 'planCommandQueueAccessKeyId'),
           string(credentialsId: 'ffc-elm-sqs-plan-command-access-key-write', variable: 'planCommandQueueSecretAccessKey'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
-          usernamePassword(credentialsId: postgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
+          usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
         ]) {
           def helmValues = [
             /container.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
@@ -80,8 +81,9 @@ node {
             /queues.planCommandQueue.accessKeyId="${planCommandQueueAccessKeyId}"/,
             /queues.planCommandQueue.create="false"/,
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
-            /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prplanCommandQueueSuffix}"/,
-            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/
+            /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
+            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/queue\/${prPlanCommandQueueName}"/
           ].join(',')
 
           def extraCommands = [
@@ -120,8 +122,9 @@ node {
             /queues.planCommandQueue.accessKeyId="${planCommandQueueAccessKeyId}"/,
             /queues.planCommandQueue.create="false"/,
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
-            /queues.planCommandQueue.name="${planCommandQueue}"/,
-            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/
+            /queues.planCommandQueue.name="${planCommandQueueName}"/,
+            /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/queue\/${planCommandQueueName}"/
           ].join(',')
 
           def extraCommands = [
@@ -137,7 +140,7 @@ node {
         defraUtils.undeployChart(KUBE_CREDENTIALS_ID, serviceName, mergedPrNo)
       }
       stage('Remove PR infrastructure') {
-        defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, postgresUserCredId, pr)
+        defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, pr)
       }
     }
     stage('Set GitHub status as success'){
