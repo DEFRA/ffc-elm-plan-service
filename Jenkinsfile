@@ -83,7 +83,7 @@ node {
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
             /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/queue\/${prPlanCommandQueueName}"/
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${prPlanCommandQueueName}"/
           ].join(',')
 
           def extraCommands = [
@@ -124,7 +124,7 @@ node {
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${planCommandQueueName}"/,
             /queues.planCommandQueue.secretAccessKey="${planCommandQueueSecretAccessKey}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/queue\/${planCommandQueueName}"/
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${planCommandQueueName}"/
           ].join(',')
 
           def extraCommands = [
