@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+      args:
+        REGISTRY: ${DOCKER_REGISTRY:-562955126301.dkr.ecr.eu-west-2.amazonaws.com}
+    image: ffc-elm-plan-service
+    depends_on:
+      - postgres
+    env_file:
+      - variables/message-queues.env
+      - variables/postgres.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      PLAN_ENDPOINT: http://elasticmq:9324
+      PLAN_QUEUE_URL: http://elasticmq:9324/queue/plan-command
+      PLAN_QUEUE_ACCESS_KEY_ID: elasticmq
+      PLAN_QUEUE_ACCESS_KEY: elasticmq
+    volumes:
+      - ./server/:/home/node/server/
+      - ./scripts/:/home/node/scripts/
+      - ./index.js:/home/node/index.js
+      - ./package.json:/home/node/package.json
+
+  elasticmq:
+    image: softwaremill/elasticmq
+    ports:
+      - "9324:9324"
+
+  postgres:
+    image: postgres:11.4-alpine
+    env_file:
+      - variables/postgres.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: {}
+  node_modules: {}

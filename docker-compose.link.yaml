@@ -1,0 +1,27 @@
+version: '3.7'
+
+# This override file should be used in development environments to
+# connect this service to sibling services from other repositories
+
+services:
+  app:
+    build:
+      context: .
+      target: development
+    command: >
+      sh -c "
+        scripts/wait-for/wait-for postgres:5432 --
+        scripts/wait-for/wait-for elasticmq:9324 --
+        npm run migrate &&
+        npm run start:watch"
+    networks:
+      ffc-elm:
+        aliases:
+          - ffc-elm-plan-service
+      default: {}
+    ports:
+      - "3003:3003"
+
+networks:
+  ffc-elm:
+    external: true

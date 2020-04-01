@@ -1,0 +1,101 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ quote .Values.name }}
+  namespace: {{ quote .Values.namespace }}
+  labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 2 }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  minReadySeconds: {{ .Values.deployment.minReadySeconds }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.deployment.maxSurge }}
+      maxUnavailable: {{ .Values.deployment.maxUnavailable }}
+  template:
+    metadata:
+      labels: {{ include "ffc-elm.labels" . | trimSuffix "\n" | indent 6 }}
+      namespace: {{ quote .Values.namespace }}
+      annotations:
+        redeployOnChange: {{ quote .Values.deployment.redeployOnChange }}
+    spec:
+      priorityClassName: {{ quote .Values.deployment.priorityClassName }}
+      restartPolicy: {{ quote .Values.deployment.restartPolicy }}
+      {{- if .Values.deployment.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ quote .Values.deployment.imagePullSecret }}
+      {{- end }}
+      containers:
+        - name: {{ quote .Values.name }}
+          image: {{ quote .Values.image }}
+        {{- if .Values.deployment.command }}
+        {{- with .Values.deployment.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.deployment.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- end }}
+          imagePullPolicy: {{ quote .Values.deployment.imagePullPolicy }}
+          securityContext:
+            runAsUser: {{ .Values.deployment.runAsUser }}
+            runAsNonRoot: {{ .Values.deployment.runAsNonRoot }}
+            readOnlyRootFilesystem: {{ .Values.deployment.readOnlyRootFilesystem }}
+            allowPrivilegeEscalation: {{ .Values.deployment.allowPrivilegeEscalation }}
+          ports:
+            - name: http
+              containerPort: 3003
+              protocol: TCP
+          resources:
+            requests:
+                memory: {{ quote .Values.deployment.requestMemory }}
+                cpu: {{ quote .Values.deployment.requestCpu }}
+            limits:
+                memory: {{ quote .Values.deployment.limitMemory }}
+                cpu: {{ quote .Values.deployment.limitCpu }}
+          env:
+            - name: NODE_ENV
+              value: {{ quote .Values.environment }}
+            - name: POSTGRES_USERNAME
+              value: {{ quote .Values.postgres.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ quote .Values.postgres.password }}
+            - name: POSTGRES_DB
+              value: {{ quote .Values.postgres.database }}
+            - name: POSTGRES_HOST
+              value: {{ quote .Values.postgres.host }}
+            - name: POSTGRES_PORT
+              value: {{ quote .Values.postgres.port }}
+            - name: PLAN_QUEUE_NAME
+              value: {{ quote .Values.queues.planCommandQueue.name }}
+            - name: PLAN_ENDPOINT
+              value: {{ quote .Values.queues.planCommandQueue.endpoint }}
+            - name: PLAN_QUEUE_URL
+              value: {{ quote .Values.queues.planCommandQueue.url }}
+            - name: PLAN_QUEUE_REGION
+              value: {{ quote .Values.queues.planCommandQueue.region }}
+            - name: PLAN_QUEUE_ACCESS_KEY_ID
+              value: {{ quote .Values.queues.planCommandQueue.accessKeyId }}
+            - name: PLAN_QUEUE_ACCESS_KEY
+              value: {{ quote .Values.queues.planCommandQueue.secretAccessKey }}
+            - name: CREATE_PLAN_QUEUE
+              value: {{ quote .Values.queues.planCommandQueue.create }}
+            - name: PORT
+              value: "3003"
+          livenessProbe:
+            httpGet:
+              path: {{ quote .Values.probes.livenessProbe.path }}
+              port: {{ .Values.probes.livenessProbe.port }}
+            initialDelaySeconds: {{ .Values.probes.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probes.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ quote .Values.probes.readinessProbe.path }}
+              port: {{ .Values.probes.readinessProbe.port }}
+            initialDelaySeconds: {{ .Values.probes.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probes.readinessProbe.failureThreshold }}
+status: {}
