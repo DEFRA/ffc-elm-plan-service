@@ -5,8 +5,6 @@ services:
     build:
       context: .
       target: production
-      args:
-        REGISTRY: ${DOCKER_REGISTRY:-562955126301.dkr.ecr.eu-west-2.amazonaws.com}
     image: ffc-elm-plan-service
     depends_on:
       - postgres
