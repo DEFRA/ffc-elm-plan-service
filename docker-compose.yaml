@@ -5,6 +5,8 @@ services:
     build:
       context: .
       target: production
+      args:
+        REGISTRY: ${DOCKER_REGISTRY}
     image: ffc-elm-plan-service
     depends_on:
       - postgres
