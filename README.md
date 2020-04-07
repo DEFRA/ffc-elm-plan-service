@@ -105,14 +105,11 @@ docker-compose -f docker-compose.yaml -f docker-compose.link.yaml up
 
 ### Test the service
 
-The service binds to a port on the host machine so it can be tested manually by sending HTTP requests to the bound port using a tool such as [Postman](https://www.getpostman.com) or `curl`.
+The service binds to a port on the host machine so it can be tested manually by sending HTTP requests to the bound port using a tool such as [Postman](https://www.getpostman.com), `wget` or `curl`.
 
 ```
 # Send a sample request to the /submit endpoint
-curl  -i --header "Content-Type: application/json" \
-  --request POST \
-  --data '{ "planId": "PLAN123" }' \
-  http://localhost:3003/submit
+wget -qO- --header "Content-Type: application/json" --post-data '{"planId":"PLAN123"}' http://localhost:3003/submit
 ```
 
 Sample valid JSON for the `/submit` endpoint is:
