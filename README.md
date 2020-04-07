@@ -21,7 +21,23 @@ Or:
 
 ## Environment variables
 
-The following environment variables are required by the application container. Values for development are set in the Docker Compose configuration. Default values for production-like deployments are set in the Helm chart and may be overridden by build and release pipelines.
+### In development
+
+The following environment variables are required in development environments running via `docker-compose`. They can be added to a `.env` file in the project root, which is listed in `.gitignore` and automatically used by Docker Compose.
+
+| Name            | Description                                  |
+|-----------------|----------------------------------------------|
+| DOCKER_REGISTRY | Docker registry URL to pull base images from |
+
+Example `.env` file:
+
+```
+DOCKER_REGISTRY=registry.example.com
+```
+
+### In production
+
+The following environment variables are required by the application container. Default values for production-like deployments are set in the Helm chart and may be overridden by build and release pipelines.
 
 | Name                     | Description                    | Required | Default                          | Valid                             | Notes                |
 |--------------------------|--------------------------------|:--------:|----------------------------------|:---------------------------------:|----------------------|
