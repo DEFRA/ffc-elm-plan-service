@@ -1,7 +1,7 @@
 {
   "name": "ffc-elm-plan-service",
   "description": "",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage": "https://github.com/DEFRA/ffc-elm-plan-service",
   "main": "index.js",
   "scripts": {
