@@ -65,7 +65,7 @@ node {
       }
       stage('Helm install') {
         withCredentials([
-          string(credentialsId: 'ffc-elm-plan-service-account-role-arn', variable: 'serviceAccountRoleArn'),
+          string(credentialsId: 'ffc-elm-plan-service-role-arn', variable: 'serviceAccountRoleArn'),
           string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-pr', variable: 'planCommandQueueEndpoint'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
           usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
@@ -107,7 +107,7 @@ node {
         withCredentials([
           string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-master', variable: 'planCommandQueueEndpoint'),
           string(credentialsId: 'ffc-elm-postgres-external-name-master', variable: 'postgresExternalName'),
-          string(credentialsId: 'ffc-elm-plan-service-account-role-arn', variable: 'serviceAccountRoleArn'),
+          string(credentialsId: 'ffc-elm-plan-service-role-arn', variable: 'serviceAccountRoleArn'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
