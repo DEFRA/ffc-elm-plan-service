@@ -77,7 +77,8 @@ service:
   type: ClusterIP
   port: 80
 
-# serviceAccount collects options for the service account to be created
+# serviceAccount collects options for the ServiceAccount resource
 serviceAccount:
+  enabled: false
   name: ffc-elm-plan-service-account
   roleArn:

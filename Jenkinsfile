@@ -80,6 +80,7 @@ node {
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
             /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${prPlanCommandQueueName}"/,
+            /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
 
@@ -119,6 +120,7 @@ node {
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${planCommandQueueName}"/,
             /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${planCommandQueueName}"/,
+            /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
 

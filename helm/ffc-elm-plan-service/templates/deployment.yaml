@@ -24,7 +24,7 @@ spec:
         redeployOnChange: {{ quote .Values.deployment.redeployOnChange }}
     spec:
       priorityClassName: {{ quote .Values.deployment.priorityClassName }}
-      {{- if .Values.serviceAccount.roleArn }}
+      {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ quote .Values.serviceAccount.name }}
       {{- end }}
       restartPolicy: {{ quote .Values.deployment.restartPolicy }}
