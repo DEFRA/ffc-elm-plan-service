@@ -78,17 +78,17 @@ spec:
             - name: POSTGRES_PORT
               value: {{ quote .Values.postgres.port }}
             - name: PLAN_QUEUE_CREATE
-              value: {{ quote .Values.queues.planCommandQueue.create }}
+              value: {{ quote .Values.queues.planEventQueue.create }}
             - name: PLAN_QUEUE_NAME
-              value: {{ quote .Values.queues.planCommandQueue.name }}
+              value: {{ quote .Values.queues.planEventQueue.name }}
             - name: PLAN_ENDPOINT
-              value: {{ quote .Values.queues.planCommandQueue.endpoint }}
+              value: {{ quote .Values.queues.planEventQueue.endpoint }}
             - name: PLAN_QUEUE_URL
-              value: {{ quote .Values.queues.planCommandQueue.url }}
+              value: {{ quote .Values.queues.planEventQueue.url }}
             - name: PLAN_QUEUE_REGION
-              value: {{ quote .Values.queues.planCommandQueue.region }}
+              value: {{ quote .Values.queues.planEventQueue.region }}
             - name: CREATE_PLAN_QUEUE
-              value: {{ quote .Values.queues.planCommandQueue.create }}
+              value: {{ quote .Values.queues.planEventQueue.create }}
             - name: PORT
               value: "3003"
           livenessProbe:

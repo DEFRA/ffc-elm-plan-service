@@ -65,12 +65,12 @@ probes:
 
 # queues collects connection details for interacting with required message queues
 queues:
-  planCommandQueue:
+  planEventQueue:
     create: true
     endpoint: http://ffc-elm-plan-message-queue:9324
-    name: ffc-elm-plan-command
+    name: ffc-elm-plan-event
     region: eu-west-2
-    url: http://ffc-elm-plan-message-queue:9324/queue/ffc-elm-plan-command
+    url: http://ffc-elm-plan-message-queue:9324/queue/ffc-elm-plan-event
 
 # service collects options for this chart's main Service template
 service:

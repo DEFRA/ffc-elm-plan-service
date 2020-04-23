@@ -1,8 +1,7 @@
 const joi = require('@hapi/joi')
 
 const mqSchema = joi.object({
-
-  planCommandQueue: {
+  planEventQueue: {
     name: joi.string().default('plan'),
     endpoint: joi.string().default('http://localhost:9324'),
     queueUrl: joi.string().default('http://localhost:9324/queue/plan'),
@@ -14,10 +13,10 @@ const mqSchema = joi.object({
 })
 
 const mqConfig = {
-  planCommandQueue: {
+  planEventQueue: {
     name: process.env.PLAN_QUEUE_NAME,
     endpoint: process.env.PLAN_QUEUE_ENDPOINT,
-    queueUrl: process.env.PLAN_QUEUE_URLL || `${process.env.PLAN_QUEUE_ENDPOINT}/${process.env.PLAN_QUEUE_NAME}`,
+    queueUrl: process.env.PLAN_QUEUE_URL || `${process.env.PLAN_QUEUE_ENDPOINT}/${process.env.PLAN_QUEUE_NAME}`,
     region: process.env.PLAN_QUEUE_REGION,
     accessKeyId: process.env.PLAN_QUEUE_DEV_ACCESS_KEY_ID,
     secretAccessKey: process.env.PLAN_QUEUE_DEV_ACCESS_KEY,
@@ -34,8 +33,8 @@ if (mqResult.error) {
   throw new Error(`The message queue config is invalid. ${mqResult.error.message}`)
 }
 
-const planCommandQueueConfig = { ...mqResult.value.messageQueue, ...mqResult.value.planCommandQueue }
+const planEventQueueConfig = { ...mqResult.value.messageQueue, ...mqResult.value.planEventQueue }
 
 module.exports = {
-  planCommandQueueConfig: planCommandQueueConfig
+  planEventQueueConfig: planEventQueueConfig
 }

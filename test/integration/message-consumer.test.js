@@ -5,7 +5,7 @@ const purgeQueue = require('../../server/services/messaging/purge-queue')
 
 const config = require('../../server/config')
 const queueName = 'testq2'
-const queueUrl = `${config.planCommandQueueConfig.endpoint}/queue/${queueName}`
+const queueUrl = `${config.planEventQueueConfig.endpoint}/queue/${queueName}`
 
 let consumer, sender, receivedCount
 
@@ -33,27 +33,27 @@ function messageHandlerErrorOnFirst (message, done) {
 }
 
 beforeAll(async () => {
-  await createQueue(queueName, config.planCommandQueueConfig)
-  sender = new MessageSender(config.planCommandQueueConfig, queueUrl)
+  await createQueue(queueName, config.planEventQueueConfig)
+  sender = new MessageSender(config.planEventQueueConfig, queueUrl)
 })
 
 afterEach(async () => {
   consumer && consumer.stop()
-  await purgeQueue(queueUrl, config.planCommandQueueConfig)
+  await purgeQueue(queueUrl, config.planEventQueueConfig)
 })
 
 describe('consume message', () => {
   jest.setTimeout(15000)
   test('consume a json message', (done) => {
     sender.sendMessage({ greeting: greeting }).then(() => {
-      consumer = new MessageConsumer(config.planCommandQueueConfig, queueUrl, (message) => messageHandler(message, done))
+      consumer = new MessageConsumer(config.planEventQueueConfig, queueUrl, (message) => messageHandler(message, done))
       consumer.start()
     })
   })
   test('message is redelivered after a client error', (done) => {
     receivedCount = 0
     sender.sendMessage({ greeting: redeliverGreeting }).then(() => {
-      consumer = new MessageConsumer(config.planCommandQueueConfig, queueUrl, (message) => messageHandlerErrorOnFirst(message, done))
+      consumer = new MessageConsumer(config.planEventQueueConfig, queueUrl, (message) => messageHandlerErrorOnFirst(message, done))
       consumer.start()
     })
   })

@@ -11,12 +11,13 @@ def dockerTestService = 'app'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
-def planCommandQueueName = 'devffc-elm-plan-command-prod'
+def planEventQueueName = 'devffc-elm-plan-event-dev'
 def pr = ''
-def prPlanCommandQueueName = 'devffc-elm-plan-command-test'
+def prPlanEventQueueName = 'plan-event'
 def prPostgresDatabaseName = 'ffc_elm_plan'
 def prPostgresExternalNameCredId = 'ffc-elm-postgres-external-name-pr'
 def prPostgresUserCredId = 'ffc-elm-plan-service-postgres-user-jenkins'
+def prSqsQueuePrefix = 'devffc-elm-plan-service'
 def serviceName = 'ffc-elm-plan-service'
 def serviceNamespace = 'ffc-elm'
 def sonarQubeEnv = 'SonarQube'
@@ -64,12 +65,12 @@ node {
     if (pr != '') {
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
-        defraUtils.provisionPrSqsQueue(serviceName, pr, prPlanCommandQueueName, "ELM", "ELM", "Environmental Land Management")
+        defraUtils.provisionPrSqsQueue(prSqsQueuePrefix, pr, prPlanEventQueueName, "ELM", "ELM", "Environmental Land Management")
       }
       stage('Helm install') {
         withCredentials([
           string(credentialsId: 'ffc-elm-plan-service-role-arn', variable: 'serviceAccountRoleArn'),
-          string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-pr', variable: 'planCommandQueueEndpoint'),
+          string(credentialsId: 'ffc-elm-sqs-plan-event-queue-endpoint-pr', variable: 'planEventQueueEndpoint'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
           usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
         ]) {
@@ -79,10 +80,10 @@ node {
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
             /postgres.username="${postgresUsername}"/,
-            /queues.planCommandQueue.create="true"/,
-            /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
-            /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
+            /queues.planEventQueue.create="true"/,
+            /queues.planEventQueue.endpoint="${planEventQueueEndpoint}"/,
+            /queues.planEventQueue.name="${prSqsQueuePrefix}-pr${pr}-${prPlanEventQueueName}"/,
+            /queues.planEventQueue.url="${planEventQueueEndpoint}\/${serviceName}-pr${pr}-${prPlanEventQueueName}"/,
             /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
@@ -108,7 +109,7 @@ node {
       }
       stage('Deploy master') {
         withCredentials([
-          string(credentialsId: 'ffc-elm-sqs-plan-command-queue-endpoint-master', variable: 'planCommandQueueEndpoint'),
+          string(credentialsId: 'ffc-elm-sqs-plan-event-queue-endpoint-master', variable: 'planEventQueueEndpoint'),
           string(credentialsId: 'ffc-elm-postgres-external-name-master', variable: 'postgresExternalName'),
           string(credentialsId: 'ffc-elm-plan-service-role-arn', variable: 'serviceAccountRoleArn'),
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
@@ -119,10 +120,10 @@ node {
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
             /postgres.username="${postgresUsername}"/,
-            /queues.planCommandQueue.create="false"/,
-            /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
-            /queues.planCommandQueue.name="${planCommandQueueName}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${planCommandQueueName}"/,
+            /queues.planEventQueue.create="false"/,
+            /queues.planEventQueue.endpoint="${planEventQueueEndpoint}"/,
+            /queues.planEventQueue.name="${planEventQueueName}"/,
+            /queues.planEventQueue.url="${planEventQueueEndpoint}\/${planEventQueueName}"/,
             /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
@@ -141,7 +142,7 @@ node {
       }
       stage('Remove PR infrastructure') {
         defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, pr)
-        defraUtils.destroyPrSqsQueues(serviceName, pr)
+        defraUtils.destroyPrSqsQueues(prSqsQueuePrefix, pr)
       }
     }
     stage('Set GitHub status as success'){
