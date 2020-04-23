@@ -62,6 +62,7 @@ node {
       }
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
+        defraUtils.provisionPrSqsQueue(serviceName, pr, "${serviceName}-pr${pr}-${prPlanCommandQueueName}", "ELM", "ELM", "Environmental Land Management")
       }
       stage('Helm install') {
         withCredentials([
@@ -138,6 +139,7 @@ node {
       }
       stage('Remove PR infrastructure') {
         defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, pr)
+        defraUtils.destroyPrSqsQueues(serviceName, pr)
       }
     }
     stage('Set GitHub status as success'){
