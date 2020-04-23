@@ -64,7 +64,7 @@ node {
     if (pr != '') {
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
-        defraUtils.provisionPrSqsQueue(serviceName, pr, "${serviceName}-pr${pr}-${prPlanCommandQueueName}", "ELM", "ELM", "Environmental Land Management")
+        defraUtils.provisionPrSqsQueue(serviceName, pr, prPlanCommandQueueName, "ELM", "ELM", "Environmental Land Management")
       }
       stage('Helm install') {
         withCredentials([
@@ -82,7 +82,7 @@ node {
             /queues.planCommandQueue.create="true"/,
             /queues.planCommandQueue.endpoint="${planCommandQueueEndpoint}"/,
             /queues.planCommandQueue.name="${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
-            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${prPlanCommandQueueName}"/,
+            /queues.planCommandQueue.url="${planCommandQueueEndpoint}\/${serviceName}-pr${pr}-${prPlanCommandQueueName}"/,
             /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
