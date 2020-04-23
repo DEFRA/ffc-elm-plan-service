@@ -32,6 +32,11 @@ node {
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(serviceName, defraUtils.getPackageJsonVersion())
     }
+    if (pr != '') {
+      stage('Verify version incremented') {
+        defraUtils.verifyPackageJsonVersionIncremented()
+      }
+    }
     stage('Helm lint') {
       defraUtils.lintHelm(serviceName)
     }
@@ -57,9 +62,6 @@ node {
       defraUtils.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, serviceName, containerTag)
     }
     if (pr != '') {
-      stage('Verify version incremented') {
-        defraUtils.verifyPackageJsonVersionIncremented()
-      }
       stage('Provision PR infrastructure') {
         defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
         defraUtils.provisionPrSqsQueue(serviceName, pr, "${serviceName}-pr${pr}-${prPlanCommandQueueName}", "ELM", "ELM", "Environmental Land Management")
