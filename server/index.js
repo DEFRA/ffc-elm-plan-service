@@ -1,6 +1,8 @@
 const hapi = require('@hapi/hapi')
+
 const config = require('./config')
 const messageService = require('./services/message-service')
+const shutdown = require('./shutdown')
 
 async function createServer () {
   // Create the hapi server
@@ -24,17 +26,11 @@ async function createServer () {
     await server.register(require('./plugins/logging'))
   }
 
-  process.on('SIGTERM', shutdown.bind(this, 'received SIGTERM.'))
   process.on('SIGINT', shutdown.bind(this, 'received SIGINT.'))
+  process.on('SIGTERM', shutdown.bind(this, 'received SIGTERM.'))
 
   await messageService.createQueuesIfRequired()
   return server
-}
-
-async function shutdown (reason) {
-  console.info(`Shutting down. Reason: ${reason}`)
-  await messageService.closeConnections()
-  process.exit(0)
 }
 
 module.exports = createServer
