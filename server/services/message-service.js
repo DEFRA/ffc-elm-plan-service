@@ -21,7 +21,12 @@ async function publishPlan (plan) {
   }
 }
 
+async function closeConnections () {
+  // Nothing to do here as we have no consumers
+}
+
 module.exports = {
-  publishPlan,
-  createQueuesIfRequired
+  closeConnections,
+  createQueuesIfRequired,
+  publishPlan
 }
