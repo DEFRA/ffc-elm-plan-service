@@ -24,18 +24,17 @@ async function createServer () {
     await server.register(require('./plugins/logging'))
   }
 
-  process.on('SIGTERM', async function () {
-    await messageService.closeConnections()
-    process.exit(0)
-  })
-
-  process.on('SIGINT', async function () {
-    await messageService.closeConnections()
-    process.exit(0)
-  })
+  process.on('SIGTERM', shutdown.bind(this, 'received SIGTERM.'))
+  process.on('SIGINT', shutdown.bind(this, 'received SIGINT.'))
 
   await messageService.createQueuesIfRequired()
   return server
+}
+
+async function shutdown (reason) {
+  console.info(`Shutting down. Reason: ${reason}`)
+  await messageService.closeConnections()
+  process.exit(0)
 }
 
 module.exports = createServer
