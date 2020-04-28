@@ -75,7 +75,7 @@ node {
           usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
         ]) {
           def helmValues = [
-            /container.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
+            /deployment.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
             /labels.version="${containerTag}"/,
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
@@ -115,7 +115,7 @@ node {
           usernamePassword(credentialsId: 'ffc-elm-plan-service-postgres-user-master', usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword'),
         ]) {
           def helmValues = [
-            /container.redeployOnChange="${BUILD_NUMBER}"/,
+            /deployment.redeployOnChange="${BUILD_NUMBER}"/,
             /labels.version="${containerTag}"/,
             /postgres.externalName="${postgresExternalName}"/,
             /postgres.password="${postgresPassword}"/,
