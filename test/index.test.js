@@ -44,4 +44,10 @@ describe('createServer', () => {
     expect(process.on).toHaveBeenCalledWith('SIGINT', expect.anything())
     expect(process.on).toHaveBeenCalledWith('SIGTERM', expect.anything())
   })
+
+  test('creates message queues', async (done) => {
+    await createServer()
+    expect(messageService.createQueuesIfRequired).toHaveBeenCalled()
+    done()
+  })
 })

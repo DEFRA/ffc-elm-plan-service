@@ -30,7 +30,7 @@ async function createServer () {
   process.on('SIGINT', shutdown.bind(this, 'received SIGINT.'))
   process.on('SIGTERM', shutdown.bind(this, 'received SIGTERM.'))
 
-  console.info('Creating message queues.')
+  console.info('Creating any required message queues.')
   await messageService.createQueuesIfRequired()
 
   console.info('Server is ready.')
