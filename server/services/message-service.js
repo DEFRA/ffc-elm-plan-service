@@ -6,7 +6,12 @@ const planEventSender = new MessageSender(config.planEventQueueConfig, config.pl
 
 async function createQueuesIfRequired () {
   if (config.planEventQueueConfig.createQueue) {
-    await createQueue(config.planEventQueueConfig.name, config.planEventQueueConfig)
+    try {
+      await createQueue(config.planEventQueueConfig.name, config.planEventQueueConfig)
+    } catch (error) {
+      console.error(`Failed to create message queues. Error: ${error}`)
+      throw error
+    }
   }
 }
 
@@ -16,7 +21,7 @@ async function publishPlan (plan) {
       planEventSender.sendMessage(plan)
     ])
   } catch (err) {
-    console.log(err)
+    console.error(err)
     throw err
   }
 }
