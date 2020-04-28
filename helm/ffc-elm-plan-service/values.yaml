@@ -66,7 +66,7 @@ probes:
 # queues collects connection details for interacting with required message queues
 queues:
   planEventQueue:
-    create: true
+    create: false
     endpoint: http://ffc-elm-plan-message-queue:9324
     name: ffc-elm-plan-event
     region: eu-west-2
