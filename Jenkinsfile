@@ -82,7 +82,7 @@ node {
             /postgres.username="${postgresUsername}"/,
             /queues.planEventQueue.endpoint="${planEventQueueEndpoint}"/,
             /queues.planEventQueue.name="${prSqsQueuePrefix}-pr${pr}-${prPlanEventQueueName}"/,
-            /queues.planEventQueue.url="${planEventQueueEndpoint}\/${serviceName}-pr${pr}-${prPlanEventQueueName}"/,
+            /queues.planEventQueue.url="${planEventQueueEndpoint}\/${prSqsQueuePrefix}-pr${pr}-${prPlanEventQueueName}"/,
             /serviceAccount.enabled="true"/,
             /serviceAccount.roleArn="$serviceAccountRoleArn"/
           ].join(',')
