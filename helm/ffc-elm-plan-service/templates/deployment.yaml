@@ -25,6 +25,10 @@ spec:
     spec:
       priorityClassName: {{ quote .Values.deployment.priorityClassName }}
       {{- if .Values.serviceAccount.enabled }}
+      securityContext:
+        fsGroup: {{ .Values.deployment.runAsUser }}
+        runAsUser: {{ .Values.deployment.runAsUser }}
+        runAsNonRoot: {{ .Values.deployment.runAsNonRoot }}
       serviceAccountName: {{ quote .Values.serviceAccount.name }}
       {{- end }}
       restartPolicy: {{ quote .Values.deployment.restartPolicy }}
@@ -47,8 +51,6 @@ spec:
         {{- end }}
           imagePullPolicy: {{ quote .Values.deployment.imagePullPolicy }}
           securityContext:
-            runAsUser: {{ .Values.deployment.runAsUser }}
-            runAsNonRoot: {{ .Values.deployment.runAsNonRoot }}
             readOnlyRootFilesystem: {{ .Values.deployment.readOnlyRootFilesystem }}
             allowPrivilegeEscalation: {{ .Values.deployment.allowPrivilegeEscalation }}
           ports:
