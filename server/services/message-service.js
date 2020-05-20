@@ -2,26 +2,37 @@ const createQueue = require('./messaging/create-queue')
 const MessageSender = require('./messaging/message-sender')
 const config = require('../config')
 
-const planCommandSender = new MessageSender(config.planCommandQueueConfig, config.planCommandQueueConfig.queueUrl)
+const planEventSender = new MessageSender(config.planEventQueueConfig, config.planEventQueueConfig.queueUrl)
 
 async function createQueuesIfRequired () {
-  if (config.planCommandQueueConfig.createQueue) {
-    await createQueue(config.planCommandQueueConfig.name, config.planCommandQueueConfig)
+  if (config.planEventQueueConfig.createQueue) {
+    console.info('Creating Plan Event queue.')
+    try {
+      await createQueue(config.planEventQueueConfig.name, config.planEventQueueConfig)
+    } catch (error) {
+      console.error(`Failed to create Plan Event queue. Error: ${error}`)
+      throw error
+    }
   }
 }
 
 async function publishPlan (plan) {
   try {
     await Promise.all([
-      planCommandSender.sendMessage(plan)
+      planEventSender.sendMessage(plan)
     ])
   } catch (err) {
-    console.log(err)
+    console.error(err)
     throw err
   }
 }
 
+async function closeConnections () {
+  // Nothing to do here as we have no consumers
+}
+
 module.exports = {
-  publishPlan,
-  createQueuesIfRequired
+  closeConnections,
+  createQueuesIfRequired,
+  publishPlan
 }
