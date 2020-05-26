@@ -1,4 +1,4 @@
-describe('Web test', () => {
+describe('POST /submit', () => {
   const createServer = require('../../server')
   const mockMessageService = require('../../server/services/message-service')
   const mockPlanRepository = require('../../server/repository/plan-repository')
@@ -23,7 +23,7 @@ describe('Web test', () => {
     jest.unmock('../../server/services/message-service')
   })
 
-  test('POST /submit route works with valid content', async () => {
+  test('works with valid content', async () => {
     const options = {
       method: 'POST',
       url: '/submit',
@@ -38,7 +38,7 @@ describe('Web test', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('POST /submit route fails with invalid content', async () => {
+  test('fails with invalid content', async () => {
     const options = {
       method: 'POST',
       url: '/submit',

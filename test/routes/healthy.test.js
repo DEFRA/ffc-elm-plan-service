@@ -1,4 +1,4 @@
-describe('Healthy test', () => {
+describe('GET /healthy', () => {
   const planEventSender = {}
   let createServer
   let databaseService
@@ -24,7 +24,7 @@ describe('Healthy test', () => {
     await server.initialize()
   })
 
-  test('GET /healthy returns 200', async () => {
+  test('returns 200', async () => {
     const options = {
       method: 'GET',
       url: '/healthy'
@@ -38,7 +38,7 @@ describe('Healthy test', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('GET /healthy returns 500 if database not connected', async () => {
+  test('returns 500 if database not connected', async () => {
     const options = {
       method: 'GET',
       url: '/healthy'
@@ -53,7 +53,7 @@ describe('Healthy test', () => {
     expect(response.payload).toBe('database unavailable')
   })
 
-  test('GET /healthy returns 503 if plan queue not connected', async () => {
+  test('returns 503 if plan queue not connected', async () => {
     const options = {
       method: 'GET',
       url: '/healthy'
@@ -68,7 +68,7 @@ describe('Healthy test', () => {
     expect(response.payload).toBe('ok')
   })
 
-  test('GET /healthy returns 503 with appropriate message if all downstream services are disconnected', async () => {
+  test('returns 503 with appropriate message if all downstream services are disconnected', async () => {
     const options = {
       method: 'GET',
       url: '/healthy'

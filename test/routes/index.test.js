@@ -1,4 +1,4 @@
-describe('Web test', () => {
+describe('GET /', () => {
   const createServer = require('../../server')
 
   let server
@@ -17,7 +17,7 @@ describe('Web test', () => {
     jest.unmock('../../server/services/message-service')
   })
 
-  test('GET / route returns 404', async () => {
+  test('returns 404', async () => {
     const options = {
       method: 'GET',
       url: '/'
@@ -28,7 +28,7 @@ describe('Web test', () => {
     expect((response.headers['content-type'])).toEqual(expect.stringContaining('application/json'))
   })
 
-  test('GET / route returns 404 for dev mode', async () => {
+  test('returns 404 for dev mode', async () => {
     const options = {
       method: 'GET',
       url: '/'

@@ -1,4 +1,4 @@
-describe('Healthz test', () => {
+describe('GET /healthz', () => {
   let createServer
   let server
 
@@ -11,7 +11,7 @@ describe('Healthz test', () => {
     await server.initialize()
   })
 
-  test('GET /healthz returns 200', async () => {
+  test('returns 200', async () => {
     const options = {
       method: 'GET',
       url: '/healthz'
