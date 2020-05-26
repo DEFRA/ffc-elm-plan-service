@@ -39,18 +39,18 @@ DOCKER_REGISTRY=registry.example.com
 
 The following environment variables are required by the application container. Default values for production-like deployments are set in the Helm chart and may be overridden by build and release pipelines.
 
-| Name                     | Description                    | Required | Default                          | Valid                             | Notes                |
-|--------------------------|--------------------------------|:--------:|----------------------------------|:---------------------------------:|----------------------|
-| NODE_ENV                 | Node environment               | no       |                                  | development, test, production     |                    |
-| PORT                     | Port number                    | no       | 3003                             |                                   |                      |
-| POSTGRES_DB              | Postgres database              | yes      |                                  |                                   |                      |
-| POSTGRES_USERNAME        | Postgres username              | yes      |                                  |                                   |                      |
-| POSTGRES_PASSWORD        | Postgres password              | yes      |                                  |                                   |                      |
-| PLAN_QUEUE_CREATE        | Create queue before connection | no       | true                             | Must be false for AWS deployments |                       |
-| PLAN_QUEUE_NAME          | Message queue name             | no       | plan                             |                                   |                      |
-| PLAN_QUEUE_ENDPOINT      | Message base url               | no       | http://localhost:9324            |                                   |                      |
-| PLAN_QUEUE_URL           | Message queue url              | no       | http://localhost:9324/queue/plan |                                   | or tcp               |
-| PLAN_QUEUE_REGION        | AWS region                     | no       | eu-west-2                        |                                   | Ignored in local dev |
+| Name                      | Description                    | Required | Default                          | Valid                             | Notes                |
+|---------------------------|--------------------------------|:--------:|----------------------------------|:---------------------------------:|----------------------|
+| NODE_ENV                  | Node environment               | no       |                                  | development, test, production     |                      |
+| PORT                      | Port number                    | no       | 3003                             |                                   |                      |
+| POSTGRES_DB               | Postgres database              | yes      |                                  |                                   |                      |
+| POSTGRES_USERNAME         | Postgres username              | yes      |                                  |                                   |                      |
+| POSTGRES_PASSWORD         | Postgres password              | yes      |                                  |                                   |                      |
+| PLAN_EVENT_QUEUE_CREATE   | Create queue before connection | no       | true                             | Must be false for AWS deployments |                      |
+| PLAN_EVENT_QUEUE_NAME     | Message queue name             | no       | plan                             |                                   |                      |
+| PLAN_EVENT_QUEUE_ENDPOINT | Message base url               | no       | http://localhost:9324            |                                   |                      |
+| PLAN_EVENT_QUEUE_URL      | Message queue url              | no       | http://localhost:9324/queue/plan |                                   | or tcp               |
+| PLAN_EVENT_QUEUE_REGION   | AWS region                     | no       | eu-west-2                        |                                   | Ignored in local dev |
 
 ## How to run tests
 

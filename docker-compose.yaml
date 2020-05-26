@@ -16,12 +16,12 @@ services:
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      PLAN_QUEUE_CREATE: "true"
-      PLAN_QUEUE_ENDPOINT: http://elasticmq:9324
-      PLAN_QUEUE_NAME: ffc-elm-plan
-      PLAN_QUEUE_URL: http://elasticmq:9324/queue/plan
-      PLAN_QUEUE_DEV_ACCESS_KEY: elasticmq
-      PLAN_QUEUE_DEV_ACCESS_KEY_ID: elasticmq
+      PLAN_EVENT_QUEUE_CREATE: "true"
+      PLAN_EVENT_QUEUE_ENDPOINT: http://elasticmq:9324
+      PLAN_EVENT_QUEUE_NAME: plan-event
+      PLAN_EVENT_QUEUE_URL: http://elasticmq:9324/queue/plan-event
+      PLAN_EVENT_QUEUE_DEV_ACCESS_KEY: elasticmq
+      PLAN_EVENT_QUEUE_DEV_ACCESS_KEY_ID: elasticmq
     volumes:
       - ./server/:/home/node/server/
       - ./scripts/:/home/node/scripts/
