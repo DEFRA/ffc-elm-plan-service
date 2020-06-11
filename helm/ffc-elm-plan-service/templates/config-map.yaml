@@ -1,0 +1,15 @@
+{{- include "ffc-helm-library.container-config-map" (list . "ffc-elm-apply-service.config-map") -}}
+{{- define "ffc-elm-apply-service.config-map" -}}
+data:
+  NODE_ENV: {{ quote .Values.environment }}
+  PLAN_EVENT_QUEUE_CREATE: {{ quote .Values.queues.planEventQueue.create }}
+  PLAN_EVENT_QUEUE_NAME: {{ quote .Values.queues.planEventQueue.name }}
+  PLAN_EVENT_ENDPOINT: {{ quote .Values.queues.planEventQueue.endpoint }}
+  PLAN_EVENT_QUEUE_URL: {{ quote .Values.queues.planEventQueue.url }}
+  PLAN_EVENT_QUEUE_REGION: {{ quote .Values.queues.planEventQueue.region }}
+  PORT: "3003"
+  POSTGRES_USERNAME: {{ quote .Values.postgres.username }}
+  POSTGRES_DB: {{ quote .Values.postgres.database }}
+  POSTGRES_HOST: {{ quote .Values.postgres.host }}
+  POSTGRES_PORT: {{ quote .Values.postgres.port }}
+{{- end -}}

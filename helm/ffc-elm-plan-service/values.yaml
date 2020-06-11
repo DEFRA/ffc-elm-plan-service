@@ -9,32 +9,41 @@ namespace: ffc-elm
 # workstream is the FFC workstream responsible for this deployment, used for rolebindings
 workstream: ffc-elm
 
-# deployment collects options for this chart's Deployment template
-deployment:
+# container collects options for the app container controlled by the deployment
+container:
   allowPrivilegeEscalation: false
   args: ["npm --no-update-notifier run migrate && node index"]
   command: ["/bin/sh","-c"]
   imagePullPolicy: Always
   limitCpu: 120m
   limitMemory: 120Mi
-  maxSurge: 1
-  maxUnavailable: 1
-  minReadySeconds: 10
-  priorityClassName: low
+  port: 3003
   readOnlyRootFilesystem: true
-  redeployOnChange: update this field to force a change
-  replicaCount: 1
   requestMemory: 60Mi
   requestCpu: 60m
+
+# containerConfigMap collects options for the ConfigMap that should be mounted into the container
+containerConfigMap:
+  name: ffc-elm-plan-service-config-map
+
+# containerSecret collects options for the Secret that should be mounted into the container
+containerSecret:
+  name: ffc-demo-claim-service-container-secret
+  type: Opaque
+  
+# deployment collects options for this chart's Deployment template
+deployment:
+  minReadySeconds: 10
+  priorityClassName: low
+  redeployOnChange: update this field to force a change
+  replicas: 1
   restartPolicy: Always
   runAsNonRoot: true
   runAsUser: 1000
 
 # labels collects values for some standard labels to apply to deployed resources
 labels:
-  component: service
-  instance: ""
-  version: 1.0.0
+  component: plan-service
 
 # postgres collects connection details for interacting with the required Postgres database
 postgres:
@@ -48,20 +57,21 @@ postgres:
   username: postgres@ffc_elm_plan
   port: 5432
 
-# probes collects liveness and readiness probe details for this chart's Deployment
-probes:
-  livenessProbe:
-    path: /healthz
-    port: 3003
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    failureThreshold: 3
-  readinessProbe:
-    path: /healthy
-    port: 3003
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    failureThreshold: 3
+# livenessProbe define's the check for this deployment being live
+livenessProbe:
+  path: /healthz
+  port: 3003
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
+
+# livenessProbe define's the check for this deployment being ready to receive requests
+readinessProbe:
+  path: /healthy
+  port: 3003
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
 
 # queues collects connection details for interacting with required message queues
 queues:
@@ -72,13 +82,7 @@ queues:
     region: eu-west-2
     url: http://ffc-elm-plan-message-queue:9324/queue/ffc-elm-plan-event
 
-# service collects options for this chart's main Service template
-service:
-  type: ClusterIP
-  port: 80
-
 # serviceAccount collects options for the ServiceAccount resource
 serviceAccount:
-  enabled: false
   name: ffc-elm-plan-service-account
   roleArn:
