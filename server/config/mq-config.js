@@ -14,13 +14,13 @@ const mqSchema = joi.object({
 
 const mqConfig = {
   planEventQueue: {
-    name: process.env.PLAN_QUEUE_NAME,
-    endpoint: process.env.PLAN_QUEUE_ENDPOINT,
-    queueUrl: process.env.PLAN_QUEUE_URL || `${process.env.PLAN_QUEUE_ENDPOINT}/${process.env.PLAN_QUEUE_NAME}`,
-    region: process.env.PLAN_QUEUE_REGION,
-    accessKeyId: process.env.PLAN_QUEUE_DEV_ACCESS_KEY_ID,
-    secretAccessKey: process.env.PLAN_QUEUE_DEV_ACCESS_KEY,
-    createQueue: process.env.PLAN_QUEUE_CREATE
+    name: process.env.PLAN_EVENT_QUEUE_NAME,
+    endpoint: process.env.PLAN_EVENT_QUEUE_ENDPOINT,
+    queueUrl: process.env.PLAN_EVENT_QUEUE_URL || `${process.env.PLAN_EVENT_QUEUE_ENDPOINT}/${process.env.PLAN_EVENT_QUEUE_NAME}`,
+    region: process.env.PLAN_EVENT_QUEUE_REGION,
+    accessKeyId: process.env.PLAN_EVENT_QUEUE_DEV_ACCESS_KEY_ID,
+    secretAccessKey: process.env.PLAN_EVENT_QUEUE_DEV_ACCESS_KEY,
+    createQueue: process.env.PLAN_EVENT_QUEUE_CREATE
   }
 }
 

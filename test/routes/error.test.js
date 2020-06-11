@@ -1,4 +1,4 @@
-describe('Web test', () => {
+describe('GET /error', () => {
   const createServer = require('../../server')
 
   let server
@@ -12,7 +12,7 @@ describe('Web test', () => {
     await server.stop()
   })
 
-  test('GET /error route returns 500', async () => {
+  test('returns 500', async () => {
     const options = {
       method: 'GET',
       url: '/error'
