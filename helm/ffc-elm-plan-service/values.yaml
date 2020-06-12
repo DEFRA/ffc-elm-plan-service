@@ -57,21 +57,23 @@ postgresService:
   postgresUsername: postgres@ffc_elm_plan
   postgresPort: 5432
 
-# livenessProbe define's the check for this deployment being live
-livenessProbe:
-  path: /healthz
-  port: 3003
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  failureThreshold: 3
+# probes collects configuration for application health probes
+probes:
+  # livenessProbe define's the check for this deployment being live
+  livenessProbe:
+    path: /healthz
+    port: 3003
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
 
-# livenessProbe define's the check for this deployment being ready to receive requests
-readinessProbe:
-  path: /healthy
-  port: 3003
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  failureThreshold: 3
+  # readinessProbe define's the check for this deployment being ready to receive requests
+  readinessProbe:
+    path: /healthy
+    port: 3003
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
 
 # queues collects connection details for interacting with required message queues
 queues:
