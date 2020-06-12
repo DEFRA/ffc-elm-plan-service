@@ -46,16 +46,16 @@ labels:
   component: plan-service
 
 # postgres collects connection details for interacting with the required Postgres database
-postgres:
-  database: ffc_elm_plan
-  # postgres.externalName is the external host name to which PostgreSQL
+postgresService:
+  postgresDatabase: ffc_elm_plan
+  # postgresService.postgresExternalName is the external host name to which PostgreSQL
   # requests should be forwarded. If empty, PostgreSQL is assumed to be
-  # within the cluster and accessible at postgres.host
-  externalName:
-  host: ffc-elm-plan-postgres
-  password: changeme
-  username: postgres@ffc_elm_plan
-  port: 5432
+  # within the cluster and accessible at postgresService.postgresHost
+  postgresExternalName:
+  postgresHost: ffc-elm-plan-postgres
+  postgresPassword: changeme
+  postgresUsername: postgres@ffc_elm_plan
+  postgresPort: 5432
 
 # livenessProbe define's the check for this deployment being live
 livenessProbe:
