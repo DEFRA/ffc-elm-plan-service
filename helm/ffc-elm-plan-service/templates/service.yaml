@@ -1,6 +1,6 @@
   
 {{- if .Values.postgresService.postgresExternalName }}
-{{- include "ffc-helm-library.postgres-service" (list . "ffc-elm-apply-service.postgres-service") -}}
+{{- include "ffc-helm-library.postgres-service" (list . "ffc-elm-plan-service.postgres-service") -}}
 {{- end }}
-{{- define "ffc-elm-apply-service.postgres-service" -}}
+{{- define "ffc-elm-plan-service.postgres-service" -}}
 {{- end -}}

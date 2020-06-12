@@ -1,5 +1,5 @@
-{{- include "ffc-helm-library.container-config-map" (list . "ffc-elm-apply-service.config-map") -}}
-{{- define "ffc-elm-apply-service.config-map" -}}
+{{- include "ffc-helm-library.container-config-map" (list . "ffc-elm-plan-service.config-map") -}}
+{{- define "ffc-elm-plan-service.config-map" -}}
 data:
   NODE_ENV: {{ quote .Values.environment }}
   PLAN_EVENT_QUEUE_CREATE: {{ quote .Values.queues.planEventQueue.create }}
