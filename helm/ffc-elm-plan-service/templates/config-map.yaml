@@ -7,7 +7,7 @@ data:
   PLAN_EVENT_ENDPOINT: {{ quote .Values.queues.planEventQueue.endpoint }}
   PLAN_EVENT_QUEUE_URL: {{ quote .Values.queues.planEventQueue.url }}
   PLAN_EVENT_QUEUE_REGION: {{ quote .Values.queues.planEventQueue.region }}
-  PORT: "3003"
+  PORT: {{ quote .Values.container.port }}
   POSTGRES_USERNAME: {{ quote .Values.postgresService.postgresUsername }}
   POSTGRES_DB: {{ quote .Values.postgresService.postgresDatabase }}
   POSTGRES_HOST: {{ quote .Values.postgresService.postgresHost }}

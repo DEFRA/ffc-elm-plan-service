@@ -28,7 +28,7 @@ containerConfigMap:
 
 # containerSecret collects options for the Secret that should be mounted into the container
 containerSecret:
-  name: ffc-demo-claim-service-container-secret
+  name: ffc-elm-plan-service-container-secret
   type: Opaque
   
 # deployment collects options for this chart's Deployment template
