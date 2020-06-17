@@ -1,4 +1,4 @@
-@Library('defra-library@4')
+@Library('defra-library@4.13')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -77,9 +77,9 @@ node {
           def helmValues = [
             /deployment.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
             /labels.version="${containerTag}"/,
-            /postgres.externalName="${postgresExternalName}"/,
-            /postgres.password="${postgresPassword}"/,
-            /postgres.username="${postgresUsername}"/,
+            /postgresService.postgresExternalName="${postgresExternalName}"/,
+            /postgresService.postgresPassword="${postgresPassword}"/,
+            /postgresService.postgresUsername="${postgresUsername}"/,
             /queues.planEventQueue.endpoint="${planEventQueueEndpoint}"/,
             /queues.planEventQueue.name="${prSqsQueuePrefix}-pr${pr}-${prPlanEventQueueName}"/,
             /queues.planEventQueue.url="${planEventQueueEndpoint}\/${prSqsQueuePrefix}-pr${pr}-${prPlanEventQueueName}"/,
@@ -116,9 +116,9 @@ node {
           def helmValues = [
             /deployment.redeployOnChange="${BUILD_NUMBER}"/,
             /labels.version="${containerTag}"/,
-            /postgres.externalName="${postgresExternalName}"/,
-            /postgres.password="${postgresPassword}"/,
-            /postgres.username="${postgresUsername}"/,
+            /postgresService.postgresExternalName="${postgresExternalName}"/,
+            /postgresService.postgresPassword="${postgresPassword}"/,
+            /postgresService.postgresUsername="${postgresUsername}"/,
             /queues.planEventQueue.endpoint="${planEventQueueEndpoint}"/,
             /queues.planEventQueue.name="${planEventQueueName}"/,
             /queues.planEventQueue.url="${planEventQueueEndpoint}\/${planEventQueueName}"/,

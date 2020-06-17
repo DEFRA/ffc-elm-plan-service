@@ -1,0 +1,6 @@
+{{- define "ffc-elm-plan-service.container" -}}
+livenessProbe: {{ include "ffc-helm-library.http-get-probe" (list . .Values.probes.livenessProbe) | nindent 4}}
+readinessProbe: {{ include "ffc-helm-library.http-get-probe" (list . .Values.probes.readinessProbe) | nindent 4}}
+ports:
+- containerPort: {{ .Values.container.port }}
+{{- end -}}
