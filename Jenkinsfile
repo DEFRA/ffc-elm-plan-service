@@ -1,4 +1,4 @@
-@Library('defra-library@4.13')
+@Library('defra-library@4.9.0')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -8,7 +8,6 @@ def cscServiceCode = 'ELM'
 def cscServiceName = 'ELM'
 def cscServiceType = 'Environmental Land Management'
 def dockerTestService = 'app'
-def environment = 'production'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
