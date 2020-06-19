@@ -32,15 +32,6 @@ node {
     }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(serviceName, defraUtils.getPackageJsonVersion())
-
-      // DO NOT MERGE: The variable overrides below force the pipeline to run
-      //               as if from the master branch so changes can be tested.
-
-      // Start test: fake a master deployment
-      pr = ''
-      containerTag = defraUtils.getPackageJsonVersion()
-      mergedPrNo = 'pr12'
-      // End test
     }
     if (pr != '') {
       stage('Verify version incremented') {
