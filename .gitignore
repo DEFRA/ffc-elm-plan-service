@@ -67,3 +67,6 @@ lcov.info
 TEST-*.xml
 test-output/
 .vscode
+
+# Helm lock files
+helm/**/*.lock
