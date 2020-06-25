@@ -4,7 +4,7 @@ data:
   NODE_ENV: {{ quote .Values.environment }}
   PLAN_EVENT_QUEUE_CREATE: {{ quote .Values.queues.planEventQueue.create }}
   PLAN_EVENT_QUEUE_NAME: {{ quote .Values.queues.planEventQueue.name }}
-  PLAN_EVENT_ENDPOINT: {{ quote .Values.queues.planEventQueue.endpoint }}
+  PLAN_EVENT_QUEUE_ENDPOINT: {{ quote .Values.queues.planEventQueue.endpoint }}
   PLAN_EVENT_QUEUE_URL: {{ quote .Values.queues.planEventQueue.url }}
   PLAN_EVENT_QUEUE_REGION: {{ quote .Values.queues.planEventQueue.region }}
   PORT: {{ quote .Values.container.port }}
