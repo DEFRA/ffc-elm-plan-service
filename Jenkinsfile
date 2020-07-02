@@ -8,6 +8,7 @@ def cscServiceCode = 'ELM'
 def cscServiceName = 'ELM'
 def cscServiceType = 'Environmental Land Management'
 def dockerTestService = 'app'
+def jenkinsPostgresUserCredId = 'ffc-elm-postgres-user-jenkins'
 def lcovFile = './test-output/lcov.info'
 def localSrcFolder = '.'
 def mergedPrNo = ''
@@ -16,7 +17,6 @@ def pr = ''
 def prPlanEventQueueName = 'plan-event'
 def prPostgresDatabaseName = 'ffc_elm_plan'
 def prPostgresExternalNameCredId = 'ffc-elm-postgres-external-name-pr'
-def prPostgresUserCredId = 'ffc-elm-postgres-user-jenkins'
 def prSqsQueuePrefix = 'devffc-elm-plan-service'
 def serviceName = 'ffc-elm-plan-service'
 def serviceNamespace = 'ffc-elm'
@@ -64,7 +64,7 @@ node {
     }
     if (pr != '') {
       stage('Provision PR infrastructure') {
-        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
+        defraUtils.provisionPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, jenkinsPostgresUserCredId, 'ffc-elm-plan-service-postgres-user-pr', pr, true)
         defraUtils.provisionPrSqsQueue(prSqsQueuePrefix, pr, prPlanEventQueueName, "ELM", "ELM", "Environmental Land Management")
       }
       stage('Helm install') {
@@ -72,7 +72,7 @@ node {
           string(credentialsId: 'ffc-elm-plan-service-role-arn', variable: 'serviceAccountRoleArn'),
           string(credentialsId: 'ffc-elm-sqs-plan-event-queue-endpoint-pr', variable: 'planEventQueueEndpoint'),
           string(credentialsId: prPostgresExternalNameCredId, variable: 'postgresExternalName'),
-          usernamePassword(credentialsId: prPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
+          usernamePassword(credentialsId: jenkinsPostgresUserCredId, usernameVariable: 'postgresUsername', passwordVariable: 'postgresPassword')
         ]) {
           def helmValues = [
             /deployment.redeployOnChange="${pr}-${BUILD_NUMBER}"/,
@@ -132,15 +132,6 @@ node {
 
           defraUtils.deployRemoteChart(serviceNamespace, serviceName, containerTag, extraCommands)
         }
-      }
-    }
-    if (mergedPrNo != '') {
-      stage('Remove merged PR') {
-        defraUtils.undeployChart(KUBE_CREDENTIALS_ID, serviceName, mergedPrNo)
-      }
-      stage('Remove PR infrastructure') {
-        defraUtils.destroyPrDatabaseRoleAndSchema(prPostgresExternalNameCredId, prPostgresDatabaseName, prPostgresUserCredId, pr)
-        defraUtils.destroyPrSqsQueues(prSqsQueuePrefix, pr)
       }
     }
     stage('Set GitHub status as success'){
