@@ -134,6 +134,28 @@ Sample valid JSON for the `/submit` endpoint is:
 }
 ```
 
+### Postgres container
+
+When running via docker-compose, a Postgres container is created using the official [PostGIS image](https://registry.hub.docker.com/r/postgis/postgis). To access the running Postgres instance, exec into the container and use the `psql` command.
+
+For example, to connect to the `ffc_elm_plans` database:
+
+```
+docker-compose exec postgres psql -h localhost -U postgres -d ffc_elm_plans
+```
+
+#### Known issue with the Postgres container
+
+If PostGIS gives the error `OperationalError: could not access file "$libdir/postgis-X.X`, it is likely because PostGIS needs updating within the Postgres container.
+
+To update PostGIS, run:
+
+```
+docker-compose exec postgres update-postgis.sh
+```
+
+The PostGIS update is idempotent, so it's fine to run it more than once.
+
 ### Deploy to Kubernetes
 
 For production deployments, a helm chart is included in the `.\helm` folder. This service connects to an sqs message broker, using credentials defined in [values.yaml](./helm/ffc-elm-plan-service/values.yaml), which must be made available prior to deployment.

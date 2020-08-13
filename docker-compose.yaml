@@ -34,7 +34,7 @@ services:
       - "9324:9324"
 
   postgres:
-    image: postgres:11.4-alpine
+    image: postgis/postgis:12-3.0-alpine
     env_file:
       - variables/postgres.env
     volumes:
