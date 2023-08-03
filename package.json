@@ -23,7 +23,7 @@
     "@hapi/hapi": "^18.4.1",
     "@hapi/joi": "^16.1.4",
     "aws-sdk": "^2.610.0",
-    "pg": "^7.12.1",
+    "pg": "^7.18.2",
     "sequelize": "^5.19.0",
     "sequelize-cli": "^5.5.1",
     "sqs-consumer": "^5.4.0"
