@@ -21,7 +21,7 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@hapi/hapi": "^18.4.1",
-    "@hapi/joi": "^16.1.4",
+    "@hapi/joi": "^16.1.8",
     "aws-sdk": "^2.610.0",
     "pg": "^7.12.1",
     "sequelize": "^5.19.0",
